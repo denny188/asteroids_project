@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch Asteroids (Debug)", // Tên cấu hình bạn muốn hiển thị
+            "type": "cppdbg",                     // Loại debugger: C/C++
+            "request": "launch",                  // Yêu cầu khởi chạy chương trình
+            "program": "${workspaceFolder}/build/Debug/MyAsteroidsGame.exe", // ĐƯỜNG DẪN ĐẾN FILE .EXE (QUAN TRỌNG!)
+            "args": [],                           // Tham số dòng lệnh (nếu có, thường là trống)
+            "stopAtEntry": false,                 // Có dừng ở điểm vào đầu tiên của chương trình không (thường là false)
+            "cwd": "${workspaceFolder}/build/Debug", // Thư mục làm việc hiện tại khi chạy (QUAN TRỌNG!)
+            "environment": [],                    // Biến môi trường bổ sung (thường là trống)
+            "externalConsole": false,             // Có mở cửa sổ console riêng không (false: dùng Integrated Terminal của VS Code)
+            "MIMode": "gdb",                      // Chế độ Debugger Interface: gdb
+            "miDebuggerPath": "D:/mingw64/bin/gdb.exe", // ĐƯỜNG DẪN ĐẾN GDB.EXE (QUAN TRỌNG!)
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "CMake: Build" // Tên task chạy trước khi debug (thường là build) - Tùy chọn
+        }
+        // Bạn có thể thêm cấu hình khác cho chế độ Release ở đây nếu muốn
+        // {
+        //     "name": "(gdb) Launch Asteroids (Release)",
+        //     "type": "cppdbg",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/build/Release/MyAsteroidsGame.exe", // Đường dẫn khác
+        //     "args": [],
+        //     "stopAtEntry": false,
+        //     "cwd": "${workspaceFolder}/build/Release", // Đường dẫn khác
+        //     "environment": [],
+        //     "externalConsole": false,
+        //     "MIMode": "gdb",
+        //     "miDebuggerPath": "D:/mingw64/bin/gdb.exe",
+        //     "setupCommands": [
+        //         {
+        //             "description": "Enable pretty-printing for gdb",
+        //             "text": "-enable-pretty-printing",
+        //             "ignoreFailures": true
+        //         }
+        //     ],
+        //     "preLaunchTask": "CMake: Build" // Đảm bảo build đúng cấu hình Release
+        // }
+    ]
+}

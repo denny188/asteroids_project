@@ -1,0 +1,3 @@
+D:/Downloads/16_Games/16 Asteroids/build/CMakeFiles/MyAsteroidsGame.dir
+D:/Downloads/16_Games/16 Asteroids/build/CMakeFiles/edit_cache.dir
+D:/Downloads/16_Games/16 Asteroids/build/CMakeFiles/rebuild_cache.dir

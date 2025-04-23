@@ -1,0 +1,8 @@
+[
+{
+  "directory": "D:/Downloads/16_Games/16 Asteroids/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\main.cpp.obj -c \"D:\\Downloads\\16_Games\\16 Asteroids\\main.cpp\"",
+  "file": "D:/Downloads/16_Games/16 Asteroids/main.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj"
+}
+]
