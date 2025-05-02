@@ -56,10 +56,10 @@ RM = D:\mingw64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "D:\Downloads\16_Games\16 Asteroids"
+CMAKE_SOURCE_DIR = D:\Downloads\16_Games\asteroids_project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "D:\Downloads\16_Games\16 Asteroids\build"
+CMAKE_BINARY_DIR = D:\Downloads\16_Games\asteroids_project\build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -86,9 +86,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Downloads\16_Games\16 Asteroids\build\CMakeFiles" "D:\Downloads\16_Games\16 Asteroids\build\\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Downloads\16_Games\asteroids_project\build\CMakeFiles D:\Downloads\16_Games\asteroids_project\build\\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Downloads\16_Games\16 Asteroids\build\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Downloads\16_Games\asteroids_project\build\CMakeFiles 0
 .PHONY : all
 
 # The main clean target

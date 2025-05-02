@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# --- Cấu hình SFML 2.6.22 ---
+# --- Cấu hình SFML 2.6.2 ---
 # !!! Đảm bảo đường dẫn này chính xác !!!
 set(SFML_DIR "D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/cmake/SFML")
 

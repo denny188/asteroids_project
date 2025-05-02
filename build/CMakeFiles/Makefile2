@@ -53,10 +53,10 @@ RM = D:\mingw64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "D:\Downloads\16_Games\16 Asteroids"
+CMAKE_SOURCE_DIR = D:\Downloads\16_Games\asteroids_project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "D:\Downloads\16_Games\16 Asteroids\build"
+CMAKE_BINARY_DIR = D:\Downloads\16_Games\asteroids_project\build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -80,14 +80,14 @@ clean: CMakeFiles/MyAsteroidsGame.dir/clean
 CMakeFiles/MyAsteroidsGame.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="D:\Downloads\16_Games\16 Asteroids\build\CMakeFiles" --progress-num=1,2 "Built target MyAsteroidsGame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=1,2 "Built target MyAsteroidsGame"
 .PHONY : CMakeFiles/MyAsteroidsGame.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/MyAsteroidsGame.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Downloads\16_Games\16 Asteroids\build\CMakeFiles" 2
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Downloads\16_Games\asteroids_project\build\CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/MyAsteroidsGame.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Downloads\16_Games\16 Asteroids\build\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start D:\Downloads\16_Games\asteroids_project\build\CMakeFiles 0
 .PHONY : CMakeFiles/MyAsteroidsGame.dir/rule
 
 # Convenience name for target.

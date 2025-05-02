@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "d:/Downloads/16_Games/16 Asteroids/build"
+			"value" : "d:/Downloads/16_Games/asteroids_project/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -155,10 +155,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "CXX compiler"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "D:/mingw64/bin/g++.exe"
 		},
 		{
@@ -443,7 +443,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Downloads/16_Games/16 Asteroids/build/CMakeFiles/pkgRedirects"
+			"value" : "D:/Downloads/16_Games/asteroids_project/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -515,7 +515,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "D:/Downloads/16_Games/16 Asteroids"
+			"value" : "D:/Downloads/16_Games/asteroids_project"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1251,7 +1251,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Downloads/16_Games/16 Asteroids/build"
+			"value" : "D:/Downloads/16_Games/asteroids_project/build"
 		},
 		{
 			"name" : "MyAsteroidsGame_IS_TOP_LEVEL",
@@ -1275,7 +1275,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Downloads/16_Games/16 Asteroids"
+			"value" : "D:/Downloads/16_Games/asteroids_project"
 		},
 		{
 			"name" : "OPENAL_INCLUDE_DIR",

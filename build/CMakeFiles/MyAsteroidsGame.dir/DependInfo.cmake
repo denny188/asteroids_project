@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "D:/Downloads/16_Games/16 Asteroids/main.cpp" "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj" "gcc" "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj.d"
+  "D:/Downloads/16_Games/asteroids_project/main.cpp" "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj" "gcc" "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

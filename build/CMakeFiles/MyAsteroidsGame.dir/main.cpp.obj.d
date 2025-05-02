@@ -1,5 +1,5 @@
 CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: \
- D:\Downloads\16_Games\16\ Asteroids\main.cpp \
+ D:\Downloads\16_Games\asteroids_project\main.cpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Graphics.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Window.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/System.hpp \

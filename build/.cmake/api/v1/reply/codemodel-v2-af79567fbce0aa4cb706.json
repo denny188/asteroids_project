@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "D:/Downloads/16_Games/16 Asteroids/build",
-		"source" : "D:/Downloads/16_Games/16 Asteroids"
+		"build" : "D:/Downloads/16_Games/asteroids_project/build",
+		"source" : "D:/Downloads/16_Games/asteroids_project"
 	},
 	"version" : 
 	{
