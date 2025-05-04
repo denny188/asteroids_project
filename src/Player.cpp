@@ -160,10 +160,11 @@ void Player::handleInput(float dt) {
 
 // Signal that the player wants to shoot (Game class will handle cooldown and spawning)
 void Player::shoot() {
-     if (shootTimer <= 0) {
-         shootTimer = shootCooldown; // Reset cooldown internally
+     //if (shootTimer <= 0) {
+         //shootTimer = shootCooldown; // Reset cooldown internally
          // Game class will now call spawnBullet
-     }
+     //}
+     std::cout << "Player::shoot() called (intent signal)." << std::endl; // DEBUG
 }
 
 

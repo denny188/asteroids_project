@@ -291,13 +291,19 @@ CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: \
  D:\Downloads\16_Games\asteroids_project\src\PowerUp.h \
  D:\Downloads\16_Games\asteroids_project\src\Boss.h \
  D:\Downloads\16_Games\asteroids_project\src\Asteroid.h \
+ D:/mingw64/include/c++/14.2.0/fstream \
+ D:/mingw64/include/c++/14.2.0/istream \
+ D:/mingw64/include/c++/14.2.0/bits/istream.tcc \
+ D:/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/basic_file.h \
+ D:/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++io.h \
+ D:/mingw64/include/c++/14.2.0/bits/fstream.tcc \
+ D:/mingw64/include/c++/14.2.0/limits \
  D:\Downloads\16_Games\asteroids_project\src\ResourceManager.h \
  D:\Downloads\16_Games\asteroids_project\src\HazardMeteor.h \
  D:\Downloads\16_Games\asteroids_project\src\Effect.h \
  D:/mingw64/include/c++/14.2.0/cmath \
  D:/mingw64/x86_64-w64-mingw32/include/math.h \
  D:/mingw64/include/c++/14.2.0/bits/specfun.h \
- D:/mingw64/include/c++/14.2.0/limits \
  D:/mingw64/include/c++/14.2.0/tr1/gamma.tcc \
  D:/mingw64/include/c++/14.2.0/tr1/special_function_util.h \
  D:/mingw64/include/c++/14.2.0/tr1/bessel_function.tcc \
@@ -310,6 +316,4 @@ CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: \
  D:/mingw64/include/c++/14.2.0/tr1/poly_hermite.tcc \
  D:/mingw64/include/c++/14.2.0/tr1/poly_laguerre.tcc \
  D:/mingw64/include/c++/14.2.0/tr1/riemann_zeta.tcc \
- D:/mingw64/include/c++/14.2.0/iostream \
- D:/mingw64/include/c++/14.2.0/istream \
- D:/mingw64/include/c++/14.2.0/bits/istream.tcc
+ D:/mingw64/include/c++/14.2.0/iostream

@@ -9,6 +9,8 @@
 #include "Player.h"
 #include "Boss.h"
 #include "Asteroid.h"
+#include <fstream> // For file I/O
+#include <limits> // For std::numeric_limits
 
 class ResourceManager;
 // class Animation;
@@ -34,6 +36,8 @@ private:
 
     State currentState;
     PlayMode currentMode;
+
+    Player::ShipType selectedShipType; // Track selected ship
 
     ResourceManager& resourceManager;
     std::list<std::unique_ptr<Entity>> entities;
@@ -74,6 +78,7 @@ private:
     float playerRespawnTimer;
     int bossDefeatScoreBonus;
     float storyDisplayTimer; // Timer for showing story text
+    int highScore; // Track high score
 
     // --- UI Elements ---
     sf::Font uiFont;
@@ -81,6 +86,8 @@ private:
     sf::Text livesText;
     sf::Text messageText;
     sf::Text levelText;
+    sf::Text shipSelectionText; // Text to display selected ship
+    sf::Text highScoreText; // Text to display high score
     sf::Sprite gameOverSprite; // Sprite for Game Over image
 
     // --- Sounds ---
@@ -104,12 +111,16 @@ private:
     void update(float dt);
     void render();
 
+    void loadHighScore();
+    void saveHighScore();
+
     // State updates
     void updateMainMenu(float dt);
     void updatePlaying(float dt);
     void updateLevelTransition(float dt);
     void updateGameOver(float dt);
     void updateStory(float dt);
+
 
     // Render states
     void renderMainMenu();
@@ -133,6 +144,8 @@ private:
     void spawnBoss(int level); // Spawn boss based on level
     void spawnBossBullet(Boss* boss, int firePointIndex); // Boss shooting logic
     void triggerBossExplosion(sf::Vector2f bossPos); // Handle boss death effect
+    void cycleShipSelection();
+    void updateShipSelectionText();
 
     void checkCollisions();
     void cleanupEntities();

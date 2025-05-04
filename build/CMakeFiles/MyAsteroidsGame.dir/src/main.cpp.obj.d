@@ -291,6 +291,11 @@ CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: \
  D:\Downloads\16_Games\asteroids_project\src\PowerUp.h \
  D:\Downloads\16_Games\asteroids_project\src\Boss.h \
  D:\Downloads\16_Games\asteroids_project\src\Asteroid.h \
- D:/mingw64/include/c++/14.2.0/iostream \
+ D:/mingw64/include/c++/14.2.0/fstream \
  D:/mingw64/include/c++/14.2.0/istream \
- D:/mingw64/include/c++/14.2.0/bits/istream.tcc
+ D:/mingw64/include/c++/14.2.0/bits/istream.tcc \
+ D:/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/basic_file.h \
+ D:/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++io.h \
+ D:/mingw64/include/c++/14.2.0/bits/fstream.tcc \
+ D:/mingw64/include/c++/14.2.0/limits \
+ D:/mingw64/include/c++/14.2.0/iostream

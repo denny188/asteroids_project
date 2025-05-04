@@ -21,6 +21,7 @@ const float HAZARD_METEOR_SPAWN_RATE = 15.0f; // How often slow meteors appear
 const float PLAYER_RESPAWN_DELAY = 3.0f;
 const float STORY_DISPLAY_DURATION = 4.0f; // How long story text shows
 const int BOSS_LEVEL_INTERVAL = 3; // Boss appears every 3 levels in campaign
+const std::string HIGHSCORE_FILE = "highscore.dat"; // Simple file name
 
 Game::Game() :
     window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Asteroids Deluxe"),
@@ -28,6 +29,7 @@ Game::Game() :
     currentMode(PlayMode::Campaign),
     resourceManager(ResourceManager::getInstance()),
     player(nullptr),
+    selectedShipType(Player::ShipType::Standard), // Start with standard ship
     currentBoss(nullptr), // Initialize boss pointer
     currentLevel(0),
     asteroidSpawnTimer(ASTEROID_SPAWN_RATE_BASE),
@@ -35,7 +37,8 @@ Game::Game() :
     hazardMeteorSpawnTimer(HAZARD_METEOR_SPAWN_RATE),
     playerRespawnTimer(0.f),
     bossDefeatScoreBonus(1000),
-    storyDisplayTimer(0.f)
+    storyDisplayTimer(0.f),
+    highScore(0) // Initialize high score
 {
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
@@ -50,7 +53,8 @@ Game::~Game() {
 
 void Game::initialize() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    loadResources(); // Load resources and create Animation objects
+    loadResources();
+    loadHighScore(); // <<<< LOAD HIGH SCORE HERE
     setupUI();
     setState(State::MainMenu);
 }
@@ -133,6 +137,14 @@ void Game::setupUI() {
     livesText.setFont(uiFont); livesText.setCharacterSize(24); livesText.setFillColor(sf::Color::White); livesText.setPosition(10, 40);
     levelText.setFont(uiFont); levelText.setCharacterSize(24); levelText.setFillColor(sf::Color::White); levelText.setPosition(window.getSize().x - 150.f, 10); // Adjusted position
     messageText.setFont(uiFont); messageText.setCharacterSize(40); messageText.setFillColor(sf::Color::White);
+    highScoreText.setFont(uiFont);
+    highScoreText.setCharacterSize(20);
+    highScoreText.setFillColor(sf::Color::Yellow);
+    shipSelectionText.setFont(uiFont);
+    shipSelectionText.setCharacterSize(20);
+    shipSelectionText.setFillColor(sf::Color::Cyan);
+    // Position it below the main menu options
+    shipSelectionText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f + 150.f);
 
     // Setup Game Over Sprite
     try {
@@ -159,13 +171,22 @@ void Game::setState(State newState) {
     // --- State Entry Actions ---
     switch (currentState) {
         case State::MainMenu:
-            resetGame(true); // Full reset when going to main menu
-            messageText.setString("ASTEROIDS DELUXE\n\n[P] Play Campaign\n[S] Play Survival\n[I] Instructions\n[Esc] Exit");
-            messageText.setCharacterSize(40); // Reset size
-            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-            messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
-            backgroundMusic.play(); // Start music
-            break;
+        resetGame(true); // Full reset
+        messageText.setString("ASTEROIDS DELUXE\n\n[P] Play Campaign\n[S] Play Survival\n[I] Instructions\n[N] Next Ship\n[Esc] Exit"); // Added N key info
+        messageText.setCharacterSize(40);
+        messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+        messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+        // Update and position ship selection text
+        updateShipSelectionText(); // Call helper function
+        shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
+        shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f); // Position below main text
+        highScoreText.setString("High Score: " + std::to_string(highScore));
+        highScoreText.setOrigin(highScoreText.getLocalBounds().left + highScoreText.getLocalBounds().width, 0); // Align right
+        highScoreText.setPosition(window.getSize().x - 10.f, 10.f); // Top right corner
+
+        backgroundMusic.play();
+        break;
         case State::Instructions:
              showInstructions();
              break;
@@ -183,36 +204,52 @@ void Game::setState(State newState) {
                  if (currentBoss) bossMusic.play(); else backgroundMusic.play();
             } else if (!player) { // Starting new game
                 resetGame(true); // Full reset if coming from menu/game over
+                if(player) { // Check if player was created in resetGame
+                    player->setShipType(selectedShipType);
+                    std::cout << "Applied selected ship type: " << static_cast<int>(selectedShipType) << std::endl;
+                }
                 if (currentMode == PlayMode::Campaign) {
                     currentLevel = 1;
-                    setState(State::Story); // Show story before level 1
+                    showStory(currentLevel); // Use showStory to potentially transition to Story state
+                    // setState(State::Story); // showStory now handles setting state if needed
                 } else {
                     currentLevel = 1;
-                    startSurvival(); // Start survival directly (no story?)
+                    startSurvival();
                     backgroundMusic.play();
+                    setState(State::Playing); // Explicitly set playing if not going through story
                 }
             } else if (player && !player->life && player->lives > 0) { // Respawning
-                 playerRespawnTimer = PLAYER_RESPAWN_DELAY; // Start respawn timer
-                 if (currentBoss) bossMusic.play(); else backgroundMusic.play();
+                playerRespawnTimer = PLAYER_RESPAWN_DELAY;
+                if (currentBoss) bossMusic.play(); else backgroundMusic.play();
             } else { // Coming from Level Transition or Story
-                 if (currentBoss) bossMusic.play(); else backgroundMusic.play();
+                // Ensure ship type is set if player just got created by story transition etc.
+                if(player && player->currentShipType != selectedShipType) {
+                    player->setShipType(selectedShipType);
+                }
+                if (currentBoss) bossMusic.play(); else backgroundMusic.play();
             }
-            break;
+           break;
         case State::LevelTransition:
-             messageText.setString("Level " + std::to_string(currentLevel) + " Complete!");
-             // Add score bonus maybe?
-             messageText.setCharacterSize(40);
-             messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-             messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
-             clock.restart(); // Use clock for transition delay
+            messageText.setString("Level " + std::to_string(currentLevel) + " Complete!");
+            // Add score bonus maybe?
+            messageText.setCharacterSize(40);
+            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+            messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+            clock.restart(); // Use clock for transition delay
             break;
         case State::GameOver:
-             // messageText set below (using score)
-             messageText.setCharacterSize(30);
-             messageText.setString("\n\nFinal Score: " + std::to_string(player ? player->score : 0) + "\n\n[R] Retry\n[M] Main Menu");
-             messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-             // Position text below the game over sprite
-             messageText.setPosition(gameOverSprite.getPosition().x, gameOverSprite.getPosition().y + gameOverSprite.getGlobalBounds().height / 2.f + 50.f);
+            // Check and save high score BEFORE setting the text
+            if (player && player->score > highScore) {
+                highScore = player->score;
+                saveHighScore();
+            }
+            // Now set the text including the (potentially updated) high score
+            messageText.setCharacterSize(30);
+            messageText.setString("\n\nFinal Score: " + std::to_string(player ? player->score : 0) +
+                                "\nHigh Score: " + std::to_string(highScore) + // Show high score here too
+                                "\n\n[R] Retry\n[M] Main Menu");
+            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+            messageText.setPosition(gameOverSprite.getPosition().x, gameOverSprite.getPosition().y + gameOverSprite.getGlobalBounds().height / 2.f + 50.f);
             break;
         case State::Paused:
              messageText.setString("PAUSED\n\n[Esc] Resume\n[M] Main Menu");
@@ -223,7 +260,6 @@ void Game::setState(State newState) {
     }
 }
 
-
 void Game::run() { /* same as before */
     while (window.isOpen()) {
         float dt = clock.restart().asSeconds();
@@ -232,6 +268,28 @@ void Game::run() { /* same as before */
         update(dt);
         render();
     }
+}
+
+void Game::cycleShipSelection() {
+    int currentType = static_cast<int>(selectedShipType);
+    currentType++;
+    // Assuming ShipType enums are contiguous: Standard=0, Fast=1, Heavy=2
+    if (currentType > static_cast<int>(Player::ShipType::Heavy)) {
+        currentType = static_cast<int>(Player::ShipType::Standard); // Wrap around
+    }
+    selectedShipType = static_cast<Player::ShipType>(currentType);
+    std::cout << "Selected Ship Type: " << currentType << std::endl; // Debug
+}
+
+void Game::updateShipSelectionText() {
+    std::string shipName;
+    switch (selectedShipType) {
+        case Player::ShipType::Standard: shipName = "Standard"; break;
+        case Player::ShipType::Fast:     shipName = "Fast"; break;
+        case Player::ShipType::Heavy:    shipName = "Heavy"; break;
+        default:                         shipName = "Unknown"; break;
+    }
+    shipSelectionText.setString("Selected Ship: < " + shipName + " >");
 }
 
 void Game::handleInput() {
@@ -258,10 +316,17 @@ void Game::handleInput() {
         // State-specific inputs
         switch (currentState) {
             case State::MainMenu:
-                 if (event.type == sf::Event::KeyPressed) { /* P, S, I keys */
+                 if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::P) { currentMode = PlayMode::Campaign; setState(State::Playing); }
                     else if (event.key.code == sf::Keyboard::S) { currentMode = PlayMode::Survival; setState(State::Playing); }
                     else if (event.key.code == sf::Keyboard::I) { setState(State::Instructions); }
+                    else if (event.key.code == sf::Keyboard::N) { // Handle ship selection
+                        cycleShipSelection();
+                        updateShipSelectionText(); // Update display
+                        // Re-center text after content change
+                         shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
+                         shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f);
+                    }
                  }
                  break;
              case State::Instructions: break; // Esc handled globally
@@ -443,9 +508,12 @@ void Game::updatePlaying(float dt) {
 }
 
 void Game::updateLevelTransition(float dt) {
-     if (clock.getElapsedTime().asSeconds() > 2.0f) { // Shorter transition
-         setState(State::Story); // Show story before loading next level
-     }
+    if (clock.getElapsedTime().asSeconds() > 2.0f) { // Shorter transition
+        // Instead of going directly to Story state, call showStory
+        // showStory will decide whether to show text (go to Story state)
+        // or load the level directly (go to Playing state).
+        showStory(currentLevel); // Let showStory handle the next step
+    }
 }
 
 bool Game::checkLevelComplete() {
@@ -539,23 +607,42 @@ void Game::checkCollisions() {
                          powerupSound.play();
                     }
                 }
-                // --- Player <-> HazardMeteor ---
-                else if (typeA == Entity::Type::Player && typeB == Entity::Type::HazardMeteor) {
-                    if (player && player->life && !player->shieldActive) {
-                        // Apply slow effect directly
-                        player->slowTimer = 8.0f; // Duration of slow effect
-                        player->speedBoostTimer = 0.f; // Cancel speed boost
-                        b->life = false; // Destroy the meteor
-                        spawnEffect(animExplosionSmall, b->pos); // Small effect on hit
-                        powerdownSound.play(); // Play slow sound
-                        player->takeDamage(); // Player takes damage (trigger respawn logic)
-                    } else if (player && player->life && player->shieldActive) {
-                         player->shieldActive = false; player->shieldTimer = 0; // Shield breaks
-                         b->life = false; // Destroy meteor anyway
-                         spawnEffect(animExplosionSmall, b->pos);
-                         powerdownSound.play(); // Maybe play sound even with shield
-                    }
-               }
+        // --- Player <-> HazardMeteor ---
+        else if (typeA == Entity::Type::Player && typeB == Entity::Type::HazardMeteor) {
+        HazardMeteor* meteor = static_cast<HazardMeteor*>(b); // Cast b to HazardMeteor
+
+        if (player && player->life) { // Check if player exists and is alive
+            if (!player->shieldActive) {
+                // Apply slow effect directly
+                player->slowTimer = 8.0f; // Duration of slow effect
+                player->speedBoostTimer = 0.f; // Cancel speed boost
+                meteor->life = false; // Destroy the meteor
+                spawnEffect(animExplosionSmall, meteor->pos); // Small effect on hit
+                powerdownSound.play(); // Play slow sound
+
+                // Player takes damage - standard procedure
+                std::cout << "Player hit Hazard Meteor! Lives before: " << player->lives << std::endl; // DEBUG
+                player->takeDamage(); // Player takes damage
+
+                // *** CRUCIAL: Check player state AFTER takeDamage for respawn ***
+                if (player && !player->life && player->lives > 0) {
+                    playerRespawnTimer = PLAYER_RESPAWN_DELAY; // Set respawn timer
+                    std::cout << "Player died from Hazard Meteor, setting respawn timer. Lives left: " << player->lives << std::endl; // DEBUG
+                } else if (player && !player->life && player->lives <= 0) {
+                    std::cout << "Player died from Hazard Meteor, no lives left. Game Over soon." << std::endl; // DEBUG
+                    // Game Over state will be triggered by update loop finding player is null/dead with no timer
+                }
+
+        } else { // Player has shield active
+            player->shieldActive = false; // Shield breaks
+            player->shieldTimer = 0;
+            meteor->life = false; // Destroy meteor anyway
+            spawnEffect(animExplosionSmall, meteor->pos);
+            powerdownSound.play(); // Play sound even with shield
+            std::cout << "Player shield blocked Hazard Meteor." << std::endl; // DEBUG
+        }
+    }
+}
                  // --- Player <-> Boss ---
                 else if (typeA == Entity::Type::Player && typeB == Entity::Type::Boss) {
                     if (player && player->life && !player->shieldActive) {
@@ -652,7 +739,12 @@ void Game::render() {
     window.display();
 }
 
-void Game::renderMainMenu() { window.draw(messageText); }
+void Game::renderMainMenu() {
+    window.draw(messageText);
+    window.draw(shipSelectionText);
+    window.draw(highScoreText); // Draw high score on main menu
+}
+
 void Game::renderInstructions() { window.draw(messageText); }
 void Game::renderStory() { window.draw(messageText); } // Just show the story text
 
@@ -680,10 +772,10 @@ void Game::renderPlaying() {
 void Game::renderLevelTransition() { renderPlaying(); window.draw(messageText); } // Show stats during transition
 
 void Game::renderGameOver() {
-    if (gameOverSprite.getTexture()) { // Draw sprite if loaded
+    if (gameOverSprite.getTexture()) {
         window.draw(gameOverSprite);
     }
-    window.draw(messageText); // Draw text below sprite
+    window.draw(messageText); // Draws text including score and high score
 }
 
 void Game::renderPaused() {
@@ -763,19 +855,42 @@ void Game::spawnPlayer() {
 
 
 void Game::resetGame(bool fullReset) {
+    // Store player stats if not a full reset and player exists
+    int previousScore = 0;
+    int previousLives = 3; // Default lives
+     Player::ShipType previousShip = selectedShipType; // Keep selected ship through levels
+
+    if (!fullReset && player) {
+        previousScore = player->score;
+        previousLives = player->lives;
+        // previousShip = player->currentShipType; // Or keep the globally selected one? Let's keep global.
+    }
+
     entities.clear(); // Always clear entities
     player = nullptr;
     currentBoss = nullptr;
+
+    // Spawn player first (needed for stats restoration)
+    spawnPlayer(); // Ensure player object exists
+
     if (fullReset) {
         currentLevel = 1;
-        // Player score/lives reset when player is recreated in spawnPlayer/settings
+        if(player) {
+            player->score = 0;
+            player->lives = 3;
+             player->setShipType(selectedShipType); // Apply selected type on full reset
+        }
+        selectedShipType = Player::ShipType::Standard; // Reset selection on full reset
+        updateShipSelectionText(); // Update UI text if needed immediately
+
     } else {
         // Keep currentLevel
-        // Keep player score/lives (they persist in the player object if it exists)
-        spawnPlayer(); // Ensure player is added back after clearing entities
         if (player) {
-            player->reset(); // Reset position, velocity, effects, but keep score/lives
+            player->score = previousScore;
+            player->lives = previousLives;
+            player->reset(); // Reset position, velocity, effects
             player->pos = sf::Vector2f(window.getSize().x / 2.f, window.getSize().y / 2.f);
+             player->setShipType(previousShip); // Apply the ship type that was active or selected
         }
     }
 }
@@ -826,12 +941,19 @@ void Game::spawnHazardMeteor() {
 
 
 void Game::spawnBullet() {
-    // *** THÊM KIỂM TRA COOLDOWN Ở ĐẦU HÀM ***
-    if (!player || !player->life || player->shootTimer > 0) {
-        std::cout << "Cannot shoot: Player null, dead, or cooldown active (" << (player ? player->shootTimer : -1.0f) << ")" << std::endl; // DEBUG
+    // Check if player can *actually* shoot now (redundancy is okay here, ensures state)
+    if (!player || !player->life) {
+        std::cerr << "SpawnBullet called but player is null or dead." << std::endl; // More specific debug
+       return;
+   }
+    if (player->shootTimer > 0) {
+        std::cerr << "SpawnBullet called but cooldown active (" << player->shootTimer << ")" << std::endl; // Specific debug
         return;
     }
 
+
+   // --- If checks pass, proceed to spawn ---
+   std::cout << "Player cooldown OK. Spawning bullet..." << std::endl; // DEBUG
     // Nếu qua được kiểm tra cooldown:
     player->shootTimer = player->shootCooldown; // <<<---- RESET TIMER Ở ĐÂY
     shootSound.play(); // <<<---- CHƠI ÂM THANH Ở ĐÂY
@@ -848,7 +970,12 @@ void Game::spawnBullet() {
         case Bullet::BulletType::Spread: animPtr = &animBulletBlue; bulletsToSpawn=3; break; // Use blue anim for spread
     }
 
-    if (!animPtr) return;
+    if (!animPtr) {
+        std::cerr << "Error: Could not find animation for bullet type " << static_cast<int>(typeToSpawn) << std::endl;
+        player->shootTimer = 0; // Reset timer if spawn failed due to bad anim
+        shootSound.stop(); // Stop sound if it started but failed? Or let it play?
+        return;
+    }
 
     for (int i = 0; i < bulletsToSpawn; ++i) {
          auto bullet = std::make_unique<Bullet>(typeToSpawn);
@@ -856,7 +983,7 @@ void Game::spawnBullet() {
          if (bulletsToSpawn > 1) {
              shotAngle += (i - (bulletsToSpawn - 1) / 2.0f) * spreadAngle;
          }
-         float offset = player->R;
+         float offset = player->R + 5.f; // Spawn slightly ahead of the player radius
          float angleRad = (player->angle - 90) * 3.14159f / 180.f; // Use player angle for offset
          sf::Vector2f startPos = player->pos + sf::Vector2f(std::cos(angleRad) * offset, std::sin(angleRad) * offset);
 
@@ -864,6 +991,7 @@ void Game::spawnBullet() {
          entities.push_back(std::move(bullet));
     }
     std::cout << "Bullet spawned. Type: " << static_cast<int>(typeToSpawn) << std::endl; // DEBUG
+
 }
 
 void Game::spawnBossBullet(Boss* boss, int firePointIndex) {
@@ -987,25 +1115,68 @@ void Game::showInstructions() { /* Same as before */
 
 void Game::showStory(int level) {
     std::string story = "";
+    bool showStoryText = true; // Flag to control if story state is entered
+
      switch (level) {
-         case 1: story = "Level 1: Clear the initial asteroid field..."; break;
-         case BOSS_LEVEL_INTERVAL: story = "WARNING: Large unidentified object detected!"; break;
-         case 4: story = "Level 4: Increased hazard meteor activity reported."; break;
-          case BOSS_LEVEL_INTERVAL*2: story = "It's back! And it looks stronger!"; break; // Example for second boss
-         // Add more cases
+         case 1:
+             story = "Level 1:\nAn unexpected asteroid cluster has entered our sector.\nClear the area, rookie!";
+             break;
+         case BOSS_LEVEL_INTERVAL: // Level 3
+             story = "WARNING:\nMassive energy signature detected!\nPrepare for contact!";
+             break;
+         case 4:
+             story = "Level 4:\nStrange, slowing meteors sighted.\nMaintain speed and clear the field.";
+             break;
+         case BOSS_LEVEL_INTERVAL*2: // Level 6
+             story = "Hostile signature returning!\nIt seems... enhanced. Engage with extreme caution!";
+             break;
+         // Add more cases for specific levels or events
+         // Example:
+         // case 10: story = "Intelligence reports indicate the source of the asteroids\nis nearby. Press on!"; break;
+
          default:
              // No story for this level, proceed directly
-              loadLevel(currentLevel); // Load level immediately
-              setState(State::Playing);
+             showStoryText = false; // Don't enter Story state
+             loadLevel(currentLevel); // Load level immediately
+             setState(State::Playing);
              return; // Exit function early
      }
-     messageText.setString(story);
-     currentState = State::Story; // Set state to Story to display the text
-     // Origin/position set in setState(State::Story)
+
+     if (showStoryText) {
+        messageText.setString(story);
+        // Origin/position set in setState(State::Story)
+        setState(State::Story); // Set state to Story to display the text
+     }
 }
 
 // Static collision check method (same as before)
 bool Game::isCollide(const Entity *a, const Entity *b) {
     sf::Vector2f diff = b->pos - a->pos; float distSq = diff.x * diff.x + diff.y * diff.y;
     float radiusSum = a->R + b->R; return distSq < (radiusSum * radiusSum);
+}
+
+void Game::loadHighScore() {
+    std::ifstream inputFile(HIGHSCORE_FILE);
+    if (inputFile.is_open()) {
+        if (!(inputFile >> highScore)) {
+            std::cerr << "Warning: Could not read high score from " << HIGHSCORE_FILE << ". Using 0." << std::endl;
+            highScore = 0;
+        }
+        inputFile.close();
+         std::cout << "Loaded high score: " << highScore << std::endl;
+    } else {
+        std::cout << "High score file (" << HIGHSCORE_FILE << ") not found. Starting with 0." << std::endl;
+        highScore = 0;
+    }
+}
+
+void Game::saveHighScore() {
+    std::ofstream outputFile(HIGHSCORE_FILE);
+    if (outputFile.is_open()) {
+        outputFile << highScore;
+        outputFile.close();
+         std::cout << "Saved new high score: " << highScore << std::endl;
+    } else {
+        std::cerr << "Error: Could not open " << HIGHSCORE_FILE << " for saving high score." << std::endl;
+    }
 }
