@@ -1,8 +1,74 @@
 [
 {
   "directory": "D:/Downloads/16_Games/asteroids_project/build",
-  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\main.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\main.cpp",
-  "file": "D:/Downloads/16_Games/asteroids_project/main.cpp",
-  "output": "CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj"
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Animation.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Animation.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Animation.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Asteroid.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Asteroid.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Asteroid.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Boss.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Boss.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Boss.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Bullet.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Bullet.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Bullet.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Effect.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Effect.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Effect.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Entity.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Entity.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Entity.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Game.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Game.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Game.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\HazardMeteor.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\HazardMeteor.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/HazardMeteor.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\Player.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\Player.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/Player.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\PowerUp.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\PowerUp.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/PowerUp.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\ResourceManager.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\ResourceManager.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/ResourceManager.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj"
+},
+{
+  "directory": "D:/Downloads/16_Games/asteroids_project/build",
+  "command": "D:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\MyAsteroidsGame.dir\\src\\main.cpp.obj -c D:\\Downloads\\16_Games\\asteroids_project\\src\\main.cpp",
+  "file": "D:/Downloads/16_Games/asteroids_project/src/main.cpp",
+  "output": "CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj"
 }
 ]

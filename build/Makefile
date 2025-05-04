@@ -128,29 +128,293 @@ MyAsteroidsGame/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/build
 .PHONY : MyAsteroidsGame/fast
 
-main.obj: main.cpp.obj
-.PHONY : main.obj
+src/Animation.obj: src/Animation.cpp.obj
+.PHONY : src/Animation.obj
 
 # target to build an object file
-main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj
-.PHONY : main.cpp.obj
+src/Animation.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj
+.PHONY : src/Animation.cpp.obj
 
-main.i: main.cpp.i
-.PHONY : main.i
+src/Animation.i: src/Animation.cpp.i
+.PHONY : src/Animation.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/Animation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.i
+.PHONY : src/Animation.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+src/Animation.s: src/Animation.cpp.s
+.PHONY : src/Animation.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/Animation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.s
+.PHONY : src/Animation.cpp.s
+
+src/Asteroid.obj: src/Asteroid.cpp.obj
+.PHONY : src/Asteroid.obj
+
+# target to build an object file
+src/Asteroid.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj
+.PHONY : src/Asteroid.cpp.obj
+
+src/Asteroid.i: src/Asteroid.cpp.i
+.PHONY : src/Asteroid.i
+
+# target to preprocess a source file
+src/Asteroid.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.i
+.PHONY : src/Asteroid.cpp.i
+
+src/Asteroid.s: src/Asteroid.cpp.s
+.PHONY : src/Asteroid.s
+
+# target to generate assembly for a file
+src/Asteroid.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.s
+.PHONY : src/Asteroid.cpp.s
+
+src/Boss.obj: src/Boss.cpp.obj
+.PHONY : src/Boss.obj
+
+# target to build an object file
+src/Boss.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj
+.PHONY : src/Boss.cpp.obj
+
+src/Boss.i: src/Boss.cpp.i
+.PHONY : src/Boss.i
+
+# target to preprocess a source file
+src/Boss.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.i
+.PHONY : src/Boss.cpp.i
+
+src/Boss.s: src/Boss.cpp.s
+.PHONY : src/Boss.s
+
+# target to generate assembly for a file
+src/Boss.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.s
+.PHONY : src/Boss.cpp.s
+
+src/Bullet.obj: src/Bullet.cpp.obj
+.PHONY : src/Bullet.obj
+
+# target to build an object file
+src/Bullet.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj
+.PHONY : src/Bullet.cpp.obj
+
+src/Bullet.i: src/Bullet.cpp.i
+.PHONY : src/Bullet.i
+
+# target to preprocess a source file
+src/Bullet.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.i
+.PHONY : src/Bullet.cpp.i
+
+src/Bullet.s: src/Bullet.cpp.s
+.PHONY : src/Bullet.s
+
+# target to generate assembly for a file
+src/Bullet.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.s
+.PHONY : src/Bullet.cpp.s
+
+src/Effect.obj: src/Effect.cpp.obj
+.PHONY : src/Effect.obj
+
+# target to build an object file
+src/Effect.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj
+.PHONY : src/Effect.cpp.obj
+
+src/Effect.i: src/Effect.cpp.i
+.PHONY : src/Effect.i
+
+# target to preprocess a source file
+src/Effect.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.i
+.PHONY : src/Effect.cpp.i
+
+src/Effect.s: src/Effect.cpp.s
+.PHONY : src/Effect.s
+
+# target to generate assembly for a file
+src/Effect.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.s
+.PHONY : src/Effect.cpp.s
+
+src/Entity.obj: src/Entity.cpp.obj
+.PHONY : src/Entity.obj
+
+# target to build an object file
+src/Entity.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj
+.PHONY : src/Entity.cpp.obj
+
+src/Entity.i: src/Entity.cpp.i
+.PHONY : src/Entity.i
+
+# target to preprocess a source file
+src/Entity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.i
+.PHONY : src/Entity.cpp.i
+
+src/Entity.s: src/Entity.cpp.s
+.PHONY : src/Entity.s
+
+# target to generate assembly for a file
+src/Entity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.s
+.PHONY : src/Entity.cpp.s
+
+src/Game.obj: src/Game.cpp.obj
+.PHONY : src/Game.obj
+
+# target to build an object file
+src/Game.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj
+.PHONY : src/Game.cpp.obj
+
+src/Game.i: src/Game.cpp.i
+.PHONY : src/Game.i
+
+# target to preprocess a source file
+src/Game.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.i
+.PHONY : src/Game.cpp.i
+
+src/Game.s: src/Game.cpp.s
+.PHONY : src/Game.s
+
+# target to generate assembly for a file
+src/Game.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.s
+.PHONY : src/Game.cpp.s
+
+src/HazardMeteor.obj: src/HazardMeteor.cpp.obj
+.PHONY : src/HazardMeteor.obj
+
+# target to build an object file
+src/HazardMeteor.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj
+.PHONY : src/HazardMeteor.cpp.obj
+
+src/HazardMeteor.i: src/HazardMeteor.cpp.i
+.PHONY : src/HazardMeteor.i
+
+# target to preprocess a source file
+src/HazardMeteor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.i
+.PHONY : src/HazardMeteor.cpp.i
+
+src/HazardMeteor.s: src/HazardMeteor.cpp.s
+.PHONY : src/HazardMeteor.s
+
+# target to generate assembly for a file
+src/HazardMeteor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.s
+.PHONY : src/HazardMeteor.cpp.s
+
+src/Player.obj: src/Player.cpp.obj
+.PHONY : src/Player.obj
+
+# target to build an object file
+src/Player.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj
+.PHONY : src/Player.cpp.obj
+
+src/Player.i: src/Player.cpp.i
+.PHONY : src/Player.i
+
+# target to preprocess a source file
+src/Player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.i
+.PHONY : src/Player.cpp.i
+
+src/Player.s: src/Player.cpp.s
+.PHONY : src/Player.s
+
+# target to generate assembly for a file
+src/Player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.s
+.PHONY : src/Player.cpp.s
+
+src/PowerUp.obj: src/PowerUp.cpp.obj
+.PHONY : src/PowerUp.obj
+
+# target to build an object file
+src/PowerUp.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj
+.PHONY : src/PowerUp.cpp.obj
+
+src/PowerUp.i: src/PowerUp.cpp.i
+.PHONY : src/PowerUp.i
+
+# target to preprocess a source file
+src/PowerUp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.i
+.PHONY : src/PowerUp.cpp.i
+
+src/PowerUp.s: src/PowerUp.cpp.s
+.PHONY : src/PowerUp.s
+
+# target to generate assembly for a file
+src/PowerUp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.s
+.PHONY : src/PowerUp.cpp.s
+
+src/ResourceManager.obj: src/ResourceManager.cpp.obj
+.PHONY : src/ResourceManager.obj
+
+# target to build an object file
+src/ResourceManager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj
+.PHONY : src/ResourceManager.cpp.obj
+
+src/ResourceManager.i: src/ResourceManager.cpp.i
+.PHONY : src/ResourceManager.i
+
+# target to preprocess a source file
+src/ResourceManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.i
+.PHONY : src/ResourceManager.cpp.i
+
+src/ResourceManager.s: src/ResourceManager.cpp.s
+.PHONY : src/ResourceManager.s
+
+# target to generate assembly for a file
+src/ResourceManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.s
+.PHONY : src/ResourceManager.cpp.s
+
+src/main.obj: src/main.cpp.obj
+.PHONY : src/main.obj
+
+# target to build an object file
+src/main.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj
+.PHONY : src/main.cpp.obj
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\MyAsteroidsGame.dir\build.make CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -161,9 +425,42 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... MyAsteroidsGame
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
+	@echo ... src/Animation.obj
+	@echo ... src/Animation.i
+	@echo ... src/Animation.s
+	@echo ... src/Asteroid.obj
+	@echo ... src/Asteroid.i
+	@echo ... src/Asteroid.s
+	@echo ... src/Boss.obj
+	@echo ... src/Boss.i
+	@echo ... src/Boss.s
+	@echo ... src/Bullet.obj
+	@echo ... src/Bullet.i
+	@echo ... src/Bullet.s
+	@echo ... src/Effect.obj
+	@echo ... src/Effect.i
+	@echo ... src/Effect.s
+	@echo ... src/Entity.obj
+	@echo ... src/Entity.i
+	@echo ... src/Entity.s
+	@echo ... src/Game.obj
+	@echo ... src/Game.i
+	@echo ... src/Game.s
+	@echo ... src/HazardMeteor.obj
+	@echo ... src/HazardMeteor.i
+	@echo ... src/HazardMeteor.s
+	@echo ... src/Player.obj
+	@echo ... src/Player.i
+	@echo ... src/Player.s
+	@echo ... src/PowerUp.obj
+	@echo ... src/PowerUp.i
+	@echo ... src/PowerUp.s
+	@echo ... src/ResourceManager.obj
+	@echo ... src/ResourceManager.i
+	@echo ... src/ResourceManager.s
+	@echo ... src/main.obj
+	@echo ... src/main.i
+	@echo ... src/main.s
 .PHONY : help
 
 

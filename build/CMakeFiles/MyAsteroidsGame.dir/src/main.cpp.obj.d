@@ -1,5 +1,6 @@
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: \
- D:\Downloads\16_Games\asteroids_project\main.cpp \
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: \
+ D:\Downloads\16_Games\asteroids_project\src\main.cpp \
+ D:\Downloads\16_Games\asteroids_project\src\Game.h \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Graphics.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Window.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/System.hpp \
@@ -247,26 +248,30 @@ CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Graphics/Sprite.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Graphics/Text.hpp \
  D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Graphics/VertexBuffer.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/InputSoundFile.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/Export.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/Listener.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/Music.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundStream.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundSource.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/AlResource.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/OutputSoundFile.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/Sound.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundBuffer.hpp \
+ D:/mingw64/include/c++/14.2.0/set \
+ D:/mingw64/include/c++/14.2.0/bits/stl_set.h \
+ D:/mingw64/include/c++/14.2.0/bits/stl_multiset.h \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundBufferRecorder.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundRecorder.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundFileFactory.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundFileFactory.inl \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundFileReader.hpp \
+ D:/Downloads/SFML-Sources/SFML-2.6.2-custom/include/SFML/Audio/SoundFileWriter.hpp \
  D:/mingw64/include/c++/14.2.0/list \
  D:/mingw64/include/c++/14.2.0/bits/stl_list.h \
  D:/mingw64/include/c++/14.2.0/bits/allocated_ptr.h \
  D:/mingw64/include/c++/14.2.0/bits/list.tcc \
- D:/mingw64/include/c++/14.2.0/cmath \
- D:/mingw64/x86_64-w64-mingw32/include/math.h \
- D:/mingw64/include/c++/14.2.0/bits/specfun.h \
- D:/mingw64/include/c++/14.2.0/limits \
- D:/mingw64/include/c++/14.2.0/tr1/gamma.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/special_function_util.h \
- D:/mingw64/include/c++/14.2.0/tr1/bessel_function.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/beta_function.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/ell_integral.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/exp_integral.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/hypergeometric.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/legendre_function.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/poly_hermite.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/poly_laguerre.tcc \
- D:/mingw64/include/c++/14.2.0/tr1/riemann_zeta.tcc \
  D:/mingw64/include/c++/14.2.0/memory \
  D:/mingw64/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
  D:/mingw64/include/c++/14.2.0/bits/align.h \
@@ -278,4 +283,14 @@ CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: \
  D:/mingw64/include/c++/14.2.0/bits/atomic_base.h \
  D:/mingw64/include/c++/14.2.0/bits/atomic_lockfree_defines.h \
  D:/mingw64/include/c++/14.2.0/backward/auto_ptr.h \
- D:/mingw64/include/c++/14.2.0/pstl/glue_memory_defs.h
+ D:/mingw64/include/c++/14.2.0/pstl/glue_memory_defs.h \
+ D:\Downloads\16_Games\asteroids_project\src\Entity.h \
+ D:\Downloads\16_Games\asteroids_project\src\Animation.h \
+ D:\Downloads\16_Games\asteroids_project\src\Player.h \
+ D:\Downloads\16_Games\asteroids_project\src\Bullet.h \
+ D:\Downloads\16_Games\asteroids_project\src\PowerUp.h \
+ D:\Downloads\16_Games\asteroids_project\src\Boss.h \
+ D:\Downloads\16_Games\asteroids_project\src\Asteroid.h \
+ D:/mingw64/include/c++/14.2.0/iostream \
+ D:/mingw64/include/c++/14.2.0/istream \
+ D:/mingw64/include/c++/14.2.0/bits/istream.tcc

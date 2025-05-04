@@ -68,40 +68,232 @@ include CMakeFiles/MyAsteroidsGame.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/MyAsteroidsGame.dir/flags.make
 
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: D:/Downloads/16_Games/asteroids_project/main.cpp
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj"
-	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\main.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\main.cpp.obj -c D:\Downloads\16_Games\asteroids_project\main.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Animation.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Animation.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Animation.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Animation.cpp
 
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/main.cpp.i"
-	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\main.cpp > CMakeFiles\MyAsteroidsGame.dir\main.cpp.i
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Animation.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Animation.cpp.i
 
-CMakeFiles/MyAsteroidsGame.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/main.cpp.s"
-	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\main.cpp -o CMakeFiles\MyAsteroidsGame.dir\main.cpp.s
+CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Animation.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Animation.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Asteroid.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Asteroid.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Asteroid.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Asteroid.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Asteroid.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Asteroid.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Asteroid.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Asteroid.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Boss.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Boss.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Boss.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Boss.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Boss.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Boss.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Boss.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Boss.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Bullet.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Bullet.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Bullet.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Bullet.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Bullet.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Bullet.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Bullet.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Bullet.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Effect.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Effect.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Effect.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Effect.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Effect.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Effect.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Effect.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Effect.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Entity.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Entity.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Entity.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Entity.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Entity.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Entity.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Entity.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Entity.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Game.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Game.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Game.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Game.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Game.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Game.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Game.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Game.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/HazardMeteor.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\HazardMeteor.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\HazardMeteor.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\HazardMeteor.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\HazardMeteor.cpp > CMakeFiles\MyAsteroidsGame.dir\src\HazardMeteor.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\HazardMeteor.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\HazardMeteor.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/Player.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\Player.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\Player.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\Player.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\Player.cpp > CMakeFiles\MyAsteroidsGame.dir\src\Player.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\Player.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\Player.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/PowerUp.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\PowerUp.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\PowerUp.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\PowerUp.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\PowerUp.cpp > CMakeFiles\MyAsteroidsGame.dir\src\PowerUp.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\PowerUp.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\PowerUp.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/ResourceManager.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\ResourceManager.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\ResourceManager.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\ResourceManager.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\ResourceManager.cpp > CMakeFiles\MyAsteroidsGame.dir\src\ResourceManager.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\ResourceManager.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\ResourceManager.cpp.s
+
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/flags.make
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/includes_CXX.rsp
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: D:/Downloads/16_Games/asteroids_project/src/main.cpp
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj: CMakeFiles/MyAsteroidsGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj -MF CMakeFiles\MyAsteroidsGame.dir\src\main.cpp.obj.d -o CMakeFiles\MyAsteroidsGame.dir\src\main.cpp.obj -c D:\Downloads\16_Games\asteroids_project\src\main.cpp
+
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.i"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\Downloads\16_Games\asteroids_project\src\main.cpp > CMakeFiles\MyAsteroidsGame.dir\src\main.cpp.i
+
+CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.s"
+	D:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\Downloads\16_Games\asteroids_project\src\main.cpp -o CMakeFiles\MyAsteroidsGame.dir\src\main.cpp.s
 
 # Object files for target MyAsteroidsGame
 MyAsteroidsGame_OBJECTS = \
-"CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj"
+"CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj" \
+"CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj"
 
 # External object files for target MyAsteroidsGame
 MyAsteroidsGame_EXTERNAL_OBJECTS =
 
-MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/main.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Animation.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Asteroid.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Boss.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Bullet.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Effect.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Entity.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Game.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/HazardMeteor.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/Player.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/PowerUp.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/ResourceManager.cpp.obj
+MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/src/main.cpp.obj
 MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/build.make
 MyAsteroidsGame.exe: D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/libsfml-graphics.a
+MyAsteroidsGame.exe: D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/libsfml-audio.a
 MyAsteroidsGame.exe: D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/libsfml-window.a
 MyAsteroidsGame.exe: D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/libsfml-system.a
 MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/linkLibs.rsp
 MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/objects1.rsp
 MyAsteroidsGame.exe: CMakeFiles/MyAsteroidsGame.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable MyAsteroidsGame.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\Downloads\16_Games\asteroids_project\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable MyAsteroidsGame.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\MyAsteroidsGame.dir\link.txt --verbose=$(VERBOSE)
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying SFML DLLs from D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin to D:/Downloads/16_Games/asteroids_project/build"
-	D:\mingw64\bin\cmake.exe -E copy_directory D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin D:/Downloads/16_Games/asteroids_project/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying images assets to build directory"
+	D:\mingw64\bin\cmake.exe -E copy_directory D:/Downloads/16_Games/asteroids_project/images D:/Downloads/16_Games/asteroids_project/build/images
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying sounds assets to build directory"
+	D:\mingw64\bin\cmake.exe -E copy_directory D:/Downloads/16_Games/asteroids_project/sounds D:/Downloads/16_Games/asteroids_project/build/sounds
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying SFML DLLs to build directory"
+	D:\mingw64\bin\cmake.exe -E copy D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/libopenal-1.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/openal32.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/sfml-audio-2.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/sfml-graphics-2.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/sfml-network-2.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/sfml-system-2.dll D:/Downloads/SFML-Sources/SFML-2.6.2-custom/bin/sfml-window-2.dll D:/Downloads/16_Games/asteroids_project/build
 
 # Rule to build all files generated by this target.
 CMakeFiles/MyAsteroidsGame.dir/build: MyAsteroidsGame.exe

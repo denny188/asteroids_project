@@ -5,46 +5,71 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# --- Cấu hình SFML 2.6.2 ---
-# !!! Đảm bảo đường dẫn này chính xác !!!
-set(SFML_DIR "D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/cmake/SFML")
+# --- Find SFML ---
+# Ensure this path points to the correct location of SFMLConfig.cmake
+set(SFML_DIR "D:/Downloads/SFML-Sources/SFML-2.6.2-custom/lib/cmake/SFML" CACHE PATH "Path to SFML cmake config")
 
-# --- Tìm kiếm gói ---
-# Chỉ tìm OpenGL và SFML (với các component cần thiết)
-find_package(OpenGL REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(OpenAL REQUIRED)
-find_package(SFML 2.6 REQUIRED COMPONENTS graphics window system)
-# Nếu dòng find_package(SFML...) này báo lỗi "Unsupported component" trở lại,
-# thì đó là vấn đề gốc cần giải quyết.
+find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio) # Added audio
 
-# --- Tạo file thực thi ---
-add_executable(${PROJECT_NAME} main.cpp)
+# --- Add Source Files ---
+# Use GLOB to find all .cpp files in the src directory
+# Note: GLOB is convenient but can sometimes cause issues if files are added/removed
+# without re-running CMake. For larger projects, listing files explicitly is safer.
+file(GLOB SOURCE_FILES "src/*.cpp")
 
-# --- Liên kết Thư viện ---
-# Chỉ liên kết với SFML và OpenGL
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    sfml-graphics   # Sử dụng tên target không có namespace SFML::
-    sfml-window
-    sfml-system
-    opengl32
-)
-# Lưu ý: Thử dùng tên target không có namespace "SFML::" trước.
-# Nếu lỗi, thử đổi lại thành "SFML::graphics", "SFML::window", "SFML::system".
+# --- Create Executable ---
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-# --- Sao chép DLLs (Giữ lại phiên bản đơn giản nhất) ---
+# --- Include Directories ---
+# Add the src directory so headers can be found easily
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# --- Link Libraries ---
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-system sfml-window sfml-graphics sfml-audio)
+
+# --- Copy Assets Post-Build (Improved) ---
+set(ASSET_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}) # Root of your source project
+set(ASSET_DEST_DIR $<TARGET_FILE_DIR:${PROJECT_NAME}>) # Directory where the .exe is built
+
+# Function to copy assets if source exists
+function(copy_assets source_folder)
+    set(SOURCE_PATH "${ASSET_SOURCE_DIR}/${source_folder}")
+    set(DEST_PATH "${ASSET_DEST_DIR}/${source_folder}")
+    if(EXISTS "${SOURCE_PATH}")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory "${SOURCE_PATH}" "${DEST_PATH}"
+            COMMENT "Copying ${source_folder} assets to build directory")
+    else()
+        message(WARNING "Asset source directory not found: ${SOURCE_PATH}. Assets might be missing.")
+    endif()
+endfunction()
+
+# Copy images and sounds folders
+copy_assets(images)
+copy_assets(sounds)
+
+# --- Copy SFML DLLs (If on Windows) ---
 if(SFML_FOUND AND CMAKE_HOST_WIN32)
+    # Simplified DLL copying - relies on SFML_DIR being set correctly
     get_filename_component(SFML_CMAKE_DIR ${SFML_DIR} DIRECTORY)
     get_filename_component(SFML_LIB_DIR ${SFML_CMAKE_DIR} DIRECTORY)
     get_filename_component(SFML_ROOT_DIR ${SFML_LIB_DIR} DIRECTORY)
     set(SFML_BIN_DIR "${SFML_ROOT_DIR}/bin")
-    set(OUTPUT_DIR "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
 
     if(EXISTS "${SFML_BIN_DIR}")
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory "${SFML_BIN_DIR}" "${OUTPUT_DIR}"
-            COMMENT "Copying SFML DLLs from ${SFML_BIN_DIR} to ${OUTPUT_DIR}")
+        # Find all DLLs in the SFML bin directory
+        file(GLOB SFML_DLLS "${SFML_BIN_DIR}/*.dll")
+        if(SFML_DLLS)
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy ${SFML_DLLS} "${ASSET_DEST_DIR}"
+                COMMENT "Copying SFML DLLs to build directory")
+        else()
+            message(WARNING "No DLLs found in ${SFML_BIN_DIR}. SFML might not run correctly.")
+        endif()
     else()
         message(WARNING "SFML bin directory not found at '${SFML_BIN_DIR}'. DLLs may need to be copied manually.")
     endif()
 endif()
+
+# Optional: Set output directory for executable (useful for organization)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
