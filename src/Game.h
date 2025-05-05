@@ -68,7 +68,7 @@ private:
     Animation animExplosionBoss;
     // Boss
     Animation animBoss1;
-    // Animation animBoss2; // If you add Boss 2
+    // Animation animBoss2; // If add Boss 2
 
     // --- Game variables ---
     int currentLevel;

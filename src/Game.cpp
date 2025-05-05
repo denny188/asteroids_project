@@ -4,33 +4,36 @@
 #include "Asteroid.h"
 #include "Bullet.h"
 #include "PowerUp.h"
-#include "HazardMeteor.h" // Include new meteor
+#include "HazardMeteor.h"
 #include "Effect.h"
 #include "Boss.h"
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <fstream> // Required for file I/O
+#include <limits>  // Required for numeric_limits (though not used directly now)
 
 // --- Constants ---
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 const float ASTEROID_SPAWN_RATE_BASE = 3.5f;
 const float POWERUP_SPAWN_RATE_BASE = 12.0f;
-const float HAZARD_METEOR_SPAWN_RATE = 15.0f; // How often slow meteors appear
+const float HAZARD_METEOR_SPAWN_RATE = 15.0f;
 const float PLAYER_RESPAWN_DELAY = 3.0f;
-const float STORY_DISPLAY_DURATION = 4.0f; // How long story text shows
-const int BOSS_LEVEL_INTERVAL = 3; // Boss appears every 3 levels in campaign
-const std::string HIGHSCORE_FILE = "highscore.dat"; // Simple file name
+const float STORY_DISPLAY_DURATION = 4.0f;
+const int BOSS_LEVEL_INTERVAL = 3;
+const std::string HIGHSCORE_FILE = "highscore.dat";
 
+// --- Constructor ---
 Game::Game() :
-    window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Asteroids Deluxe"),
-    currentState(State::MainMenu),
+    window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Asteroids Game"),
+    currentState(State::MainMenu), // State được khởi tạo ở đây
     currentMode(PlayMode::Campaign),
     resourceManager(ResourceManager::getInstance()),
     player(nullptr),
-    selectedShipType(Player::ShipType::Standard), // Start with standard ship
-    currentBoss(nullptr), // Initialize boss pointer
+    currentBoss(nullptr),
+    selectedShipType(Player::ShipType::Standard),
     currentLevel(0),
     asteroidSpawnTimer(ASTEROID_SPAWN_RATE_BASE),
     powerUpSpawnTimer(POWERUP_SPAWN_RATE_BASE),
@@ -38,32 +41,45 @@ Game::Game() :
     playerRespawnTimer(0.f),
     bossDefeatScoreBonus(1000),
     storyDisplayTimer(0.f),
-    highScore(0) // Initialize high score
+    highScore(0)
 {
+    std::cout << "Game Constructor: Initializing window..." << std::endl; // DEBUG
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
+    std::cout << "Game Constructor: Calling initialize()..." << std::endl; // DEBUG
     initialize();
+    std::cout << "Game Constructor: initialize() finished." << std::endl; // DEBUG
 }
 
+// --- Destructor ---
 Game::~Game() {
-    // unique_ptr handles entity cleanup
     backgroundMusic.stop();
     bossMusic.stop();
 }
 
+// --- Initialization ---
 void Game::initialize() {
+    std::cout << "initialize() called." << std::endl; // DEBUG
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    std::cout << " - Loading resources..." << std::endl; // DEBUG
     loadResources();
-    loadHighScore(); // <<<< LOAD HIGH SCORE HERE
+    std::cout << " - Loading high score..." << std::endl; // DEBUG
+    loadHighScore();
+    std::cout << " - Setting up UI..." << std::endl; // DEBUG
     setupUI();
-    setState(State::MainMenu);
+    std::cout << " - Setting initial state to MainMenu..." << std::endl; // DEBUG
+    // Gọi setState một cách tường minh thay vì dựa vào giá trị khởi tạo ban đầu
+    // currentState = State::MainMenu; // Gán trực tiếp có thể bỏ qua logic trong setState
+    setState(State::MainMenu); // Gọi hàm setState để thực thi logic thiết lập
+    std::cout << "initialize() finished." << std::endl; // DEBUG
 }
 
+// --- Resource Loading ---
 void Game::loadResources() {
     std::cout << "Loading resources and animations..." << std::endl;
     try {
-        // --- Textures ---
-        resourceManager.getTexture("spaceship.png"); // Placeholder for player
+        // Textures
+        resourceManager.getTexture("spaceship.png");
         resourceManager.getTexture("background.jpg");
         resourceManager.getTexture("rock.png");
         resourceManager.getTexture("rock_medium.png");
@@ -71,692 +87,544 @@ void Game::loadResources() {
         resourceManager.getTexture("fire_blue.png");
         resourceManager.getTexture("fire_red.png");
         resourceManager.getTexture("fire_laser.png");
-        resourceManager.getTexture("slow_powerdown.png"); // Hazard meteor texture
+        resourceManager.getTexture("slow_powerdown.png");
         resourceManager.getTexture("shield_powerup.png");
         resourceManager.getTexture("weapon_powerup.png");
         resourceManager.getTexture("speed_powerup.png");
         resourceManager.getTexture("boss1.png");
-        // resourceManager.getTexture("boss2.png"); // If added
         resourceManager.getTexture("gameover.png");
         resourceManager.getTexture("explosions/type_A.png");
         resourceManager.getTexture("explosions/type_B.png");
         resourceManager.getTexture("explosions/type_C.png");
         resourceManager.getTexture("explosions/boss_explosion.png");
 
-        // --- Create Animations ---
-        // Asteroids
+        // Animations
         animRockLarge = Animation(resourceManager.getTexture("rock.png"), 0, 0, 64, 64, 16, 0.2f);
         animRockMedium = Animation(resourceManager.getTexture("rock_medium.png"), 0, 0, 96, 96, 12, 0.25f);
         animRockSmall = Animation(resourceManager.getTexture("rock_small.png"), 0, 0, 64, 64, 16, 0.3f);
-        // Bullets
         animBulletBlue = Animation(resourceManager.getTexture("fire_blue.png"), 0, 0, 32, 64, 16, 0.8f, false);
         animBulletRed = Animation(resourceManager.getTexture("fire_red.png"), 0, 0, 32, 64, 16, 0.9f, false);
         animBulletLaser = Animation(resourceManager.getTexture("fire_laser.png"), 0, 0, 64, 64, 18, 1.2f, false);
-        // Hazard Meteor
         animHazardMeteor = Animation(resourceManager.getTexture("slow_powerdown.png"), 0, 0, 64, 64, 24, 0.3f, true);
-        // Explosions
-        // type_A.png: 1024x50, 20 frames => W ~ 51
         animExplosionSmall = Animation(resourceManager.getTexture("explosions/type_A.png"), 0, 0, 51, 50, 20, 0.6f, false);
         animExplosionPlayer = Animation(resourceManager.getTexture("explosions/type_B.png"), 0, 0, 192, 192, 64, 0.7f, false);
         animExplosionAsteroid = Animation(resourceManager.getTexture("explosions/type_C.png"), 0, 0, 256, 256, 48, 0.6f, false);
         animExplosionBoss = Animation(resourceManager.getTexture("explosions/boss_explosion.png"), 0, 0, 64, 64, 8, 0.5f, false);
-        // Boss
-        animBoss1 = Animation(resourceManager.getTexture("boss1.png"), 0, 0, 230, 336, 1, 0, false); // Static boss
+        animBoss1 = Animation(resourceManager.getTexture("boss1.png"), 0, 0, 230, 336, 1, 0, false);
 
-        // --- Fonts ---
-        if (!uiFont.loadFromFile("C:/Windows/Fonts/arial.ttf")) { // ADJUST PATH!
-             throw std::runtime_error("Failed to load font: arial.ttf");
-         }
+        // Fonts (Adjust path as needed - place font near executable or provide full path)
+        if (!uiFont.loadFromFile("arial.ttf")) { // Example: Assuming arial.ttf is in the same folder
+             // Try Windows path as fallback, but ideally the font is local
+             if (!uiFont.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+                 throw std::runtime_error("Failed to load font: arial.ttf (checked local and C:/Windows/Fonts)");
+             }
+        }
 
-        // --- Sounds ---
+        // Sounds
         shootSound.setBuffer(resourceManager.getSoundBuffer("shoot.wav"));
         explosionSoundAsteroid.setBuffer(resourceManager.getSoundBuffer("explosion_asteroid.wav"));
         explosionSoundPlayer.setBuffer(resourceManager.getSoundBuffer("explosion_player.wav"));
         powerupSound.setBuffer(resourceManager.getSoundBuffer("powerup_collect.wav"));
-        powerdownSound.setBuffer(resourceManager.getSoundBuffer("powerdown.ogg")); // Assign slow hit sound
-        // TODO: Load boss hit/explode sounds when available
+        powerdownSound.setBuffer(resourceManager.getSoundBuffer("powerdown.ogg"));
         // bossHitSound.setBuffer(resourceManager.getSoundBuffer("boss_hit.wav"));
         // bossExplodeSound.setBuffer(resourceManager.getSoundBuffer("boss_explode.wav"));
 
-        // --- Music ---
+        // Music
         if (!backgroundMusic.openFromFile("sounds/background_music.ogg")) throw std::runtime_error("Failed to load background music");
         backgroundMusic.setLoop(true); backgroundMusic.setVolume(30);
         if (!bossMusic.openFromFile("sounds/boss_theme.ogg")) throw std::runtime_error("Failed to load boss music");
         bossMusic.setLoop(true); bossMusic.setVolume(45);
 
-    } catch (const std::exception& e) { // Catch std::exception for broader coverage
+    } catch (const std::exception& e) {
         std::cerr << "Error loading resources: " << e.what() << std::endl;
-        window.close();
+        // Consider closing the window or handling the error more gracefully
+         window.close();
+         exit(EXIT_FAILURE); // Exit if critical resources fail
     }
-    std::cout << "Resources loaded." << std::endl;
+    std::cout << "Resources loaded successfully." << std::endl;
 }
 
+// --- UI Setup ---
 void Game::setupUI() {
-    // Score, Lives, Level Text setup (same as before)
     scoreText.setFont(uiFont); scoreText.setCharacterSize(24); scoreText.setFillColor(sf::Color::White); scoreText.setPosition(10, 10);
     livesText.setFont(uiFont); livesText.setCharacterSize(24); livesText.setFillColor(sf::Color::White); livesText.setPosition(10, 40);
-    levelText.setFont(uiFont); levelText.setCharacterSize(24); levelText.setFillColor(sf::Color::White); levelText.setPosition(window.getSize().x - 150.f, 10); // Adjusted position
+    levelText.setFont(uiFont); levelText.setCharacterSize(24); levelText.setFillColor(sf::Color::White); levelText.setPosition(window.getSize().x - 150.f, 10);
     messageText.setFont(uiFont); messageText.setCharacterSize(40); messageText.setFillColor(sf::Color::White);
-    highScoreText.setFont(uiFont);
-    highScoreText.setCharacterSize(20);
-    highScoreText.setFillColor(sf::Color::Yellow);
-    shipSelectionText.setFont(uiFont);
-    shipSelectionText.setCharacterSize(20);
-    shipSelectionText.setFillColor(sf::Color::Cyan);
-    // Position it below the main menu options
-    shipSelectionText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f + 150.f);
 
-    // Setup Game Over Sprite
+    highScoreText.setFont(uiFont); highScoreText.setCharacterSize(20); highScoreText.setFillColor(sf::Color::Yellow);
+    shipSelectionText.setFont(uiFont); shipSelectionText.setCharacterSize(20); shipSelectionText.setFillColor(sf::Color::Cyan);
+
+    // Game Over Sprite
     try {
         gameOverSprite.setTexture(resourceManager.getTexture("gameover.png"));
         gameOverSprite.setOrigin(gameOverSprite.getLocalBounds().width / 2.f, gameOverSprite.getLocalBounds().height / 2.f);
-        gameOverSprite.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f - 50); // Position slightly above center
+        gameOverSprite.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f - 50);
     } catch (const std::runtime_error& e) {
-         std::cerr << "Warning: Failed to load gameover.png texture. Game over screen will use text only." << std::endl;
+        std::cerr << "Warning: Failed to load gameover.png texture. Game over screen will use text only." << std::endl;
     }
-
 }
 
+// --- State Management ---
 void Game::setState(State newState) {
     State oldState = currentState;
-    currentState = newState;
-    messageText.setString(""); // Clear messages
+     std::cout << "setState() called: old=" << static_cast<int>(oldState) << ", new=" << static_cast<int>(newState) << std::endl; // DEBUG
 
-    // --- State Exit Actions ---
+    currentState = newState;
+    messageText.setString("");
+
+    // State Exit Actions
     if (oldState == State::Playing || oldState == State::Paused) {
-         backgroundMusic.pause(); // Pause main music when leaving playing/paused state
-         bossMusic.pause();     // Pause boss music too
+         std::cout << " - Pausing music due to exiting Playing/Paused." << std::endl; // DEBUG
+        backgroundMusic.pause();
+        bossMusic.pause();
     }
 
-    // --- State Entry Actions ---
+    // State Entry Actions
+    std::cout << " - Entering setup for state " << static_cast<int>(currentState) << std::endl; // DEBUG
     switch (currentState) {
         case State::MainMenu:
-        resetGame(true); // Full reset
-        messageText.setString("ASTEROIDS DELUXE\n\n[P] Play Campaign\n[S] Play Survival\n[I] Instructions\n[N] Next Ship\n[Esc] Exit"); // Added N key info
-        messageText.setCharacterSize(40);
-        messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-        messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
-
-        // Update and position ship selection text
-        updateShipSelectionText(); // Call helper function
-        shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
-        shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f); // Position below main text
-        highScoreText.setString("High Score: " + std::to_string(highScore));
-        highScoreText.setOrigin(highScoreText.getLocalBounds().left + highScoreText.getLocalBounds().width, 0); // Align right
-        highScoreText.setPosition(window.getSize().x - 10.f, 10.f); // Top right corner
-
-        backgroundMusic.play();
-        break;
-        case State::Instructions:
-             showInstructions();
-             break;
-        case State::Story:
-             // showStory() is called within loadLevel/startSurvival
-             storyDisplayTimer = STORY_DISPLAY_DURATION; // Set timer
-             messageText.setCharacterSize(30);
-             // Text is set by showStory()
-              messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-             messageText.setPosition(window.getSize().x / 2.f, window.getSize().y * 0.8f); // Display near bottom
-             break;
-        case State::Playing:
-            if (oldState == State::Paused) {
-                 // Resuming game
-                 if (currentBoss) bossMusic.play(); else backgroundMusic.play();
-            } else if (!player) { // Starting new game
-                resetGame(true); // Full reset if coming from menu/game over
-                if(player) { // Check if player was created in resetGame
-                    player->setShipType(selectedShipType);
-                    std::cout << "Applied selected ship type: " << static_cast<int>(selectedShipType) << std::endl;
-                }
-                if (currentMode == PlayMode::Campaign) {
-                    currentLevel = 1;
-                    showStory(currentLevel); // Use showStory to potentially transition to Story state
-                    // setState(State::Story); // showStory now handles setting state if needed
-                } else {
-                    currentLevel = 1;
-                    startSurvival();
-                    backgroundMusic.play();
-                    setState(State::Playing); // Explicitly set playing if not going through story
-                }
-            } else if (player && !player->life && player->lives > 0) { // Respawning
-                playerRespawnTimer = PLAYER_RESPAWN_DELAY;
-                if (currentBoss) bossMusic.play(); else backgroundMusic.play();
-            } else { // Coming from Level Transition or Story
-                // Ensure ship type is set if player just got created by story transition etc.
-                if(player && player->currentShipType != selectedShipType) {
-                    player->setShipType(selectedShipType);
-                }
-                if (currentBoss) bossMusic.play(); else backgroundMusic.play();
+             std::cout << "   - Setting up MainMenu..." << std::endl; // DEBUG
+            resetGame(true); // Reset game state, spawns player
+             std::cout << "   - Game reset complete (player spawned)." << std::endl; // DEBUG
+            messageText.setString("ASTEROIDS DELUXE\n\n[P] Play Campaign\n[S] Play Survival\n[I] Instructions\n[N] Next Ship\n[Esc] Exit");
+            messageText.setCharacterSize(40);
+            // Origin/Positioning (Quan trọng: đảm bảo font đã load và string đã set)
+            if (uiFont.getInfo().family.empty()) {
+                 std::cerr << "   - WARNING: uiFont seems invalid in setState(MainMenu)!" << std::endl;
             }
-           break;
+            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+            messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+            updateShipSelectionText();
+            shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
+            shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f);
+
+            highScoreText.setString("High Score: " + std::to_string(highScore));
+            highScoreText.setOrigin(highScoreText.getLocalBounds().left + highScoreText.getLocalBounds().width, 0);
+            highScoreText.setPosition(window.getSize().x - 10.f, 10.f);
+
+             std::cout << "   - UI text set. Playing music..." << std::endl; // DEBUG
+            if (backgroundMusic.getStatus() != sf::Music::Playing) {
+                 backgroundMusic.play();
+                 std::cout << "   - Background music started." << std::endl; // DEBUG
+            } else {
+                 std::cout << "   - Background music already playing." << std::endl; // DEBUG
+            }
+             std::cout << "   - MainMenu setup complete." << std::endl; // DEBUG
+            break;
+
+        case State::Instructions:
+            showInstructions();
+            break;
+
+        case State::Story:
+            // Text is set by showStory before this state is entered
+            storyDisplayTimer = STORY_DISPLAY_DURATION;
+            messageText.setCharacterSize(30);
+            // Re-center after text is set
+            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+            messageText.setPosition(window.getSize().x / 2.f, window.getSize().y * 0.8f);
+            break;
+
+        case State::Playing:
+             if (oldState == State::Paused) { // Resuming game
+                 if (currentBoss) bossMusic.play(); else backgroundMusic.play();
+             } else if (oldState == State::MainMenu || oldState == State::GameOver) { // Starting new game
+                 // resetGame(true) was called in MainMenu or is handled by Retry/R key logic
+                 // Need to initiate the chosen mode
+                 if (currentMode == PlayMode::Campaign) {
+                     currentLevel = 1; // Set level before showing story
+                     showStory(currentLevel); // Will set state to Story or Playing
+                 } else { // Survival
+                     currentLevel = 1;
+                     startSurvival();
+                     // If startSurvival doesn't set state, set it here
+                     if (currentState != State::Playing) setState(State::Playing);
+                 }
+                 // Music is handled by specific start/load functions or story transition
+             } else if (oldState == State::Story || oldState == State::LevelTransition) { // Coming from story/transition
+                 // Level was loaded by updateStory or updateLevelTransition calling loadLevel
+                 // Ensure music is correct
+                 if (currentBoss) { if(bossMusic.getStatus() != sf::Music::Playing) bossMusic.play(); }
+                 else { if(backgroundMusic.getStatus() != sf::Music::Playing) backgroundMusic.play(); }
+             } else if (player && !player->life && player->lives > 0) { // Respawning state triggered by updatePlaying
+                 playerRespawnTimer = PLAYER_RESPAWN_DELAY;
+                 if (currentBoss) { if(bossMusic.getStatus() != sf::Music::Playing) bossMusic.play(); }
+                 else { if(backgroundMusic.getStatus() != sf::Music::Playing) backgroundMusic.play(); }
+             }
+            break;
+
         case State::LevelTransition:
-            messageText.setString("Level " + std::to_string(currentLevel) + " Complete!");
-            // Add score bonus maybe?
+            messageText.setString("Level " + std::to_string(currentLevel -1) + " Complete!"); // Show level just completed
             messageText.setCharacterSize(40);
             messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
             messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
-            clock.restart(); // Use clock for transition delay
+            clock.restart(); // Start timer for transition delay
             break;
+
         case State::GameOver:
-            // Check and save high score BEFORE setting the text
             if (player && player->score > highScore) {
                 highScore = player->score;
                 saveHighScore();
             }
-            // Now set the text including the (potentially updated) high score
             messageText.setCharacterSize(30);
             messageText.setString("\n\nFinal Score: " + std::to_string(player ? player->score : 0) +
-                                "\nHigh Score: " + std::to_string(highScore) + // Show high score here too
-                                "\n\n[R] Retry\n[M] Main Menu");
+                                  "\nHigh Score: " + std::to_string(highScore) +
+                                  "\n\n[R] Retry\n[M] Main Menu");
             messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
             messageText.setPosition(gameOverSprite.getPosition().x, gameOverSprite.getPosition().y + gameOverSprite.getGlobalBounds().height / 2.f + 50.f);
+            backgroundMusic.stop(); // Ensure music stops
+            bossMusic.stop();
             break;
+
         case State::Paused:
-             messageText.setString("PAUSED\n\n[Esc] Resume\n[M] Main Menu");
-             messageText.setCharacterSize(40);
-             messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-             messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
-             break;
+            messageText.setString("PAUSED\n\n[Esc] Resume\n[M] Main Menu");
+            messageText.setCharacterSize(40);
+            messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+            messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+            // Music pause handled by exit actions of Playing state
+            break;
     }
+    std::cout << "setState() finished for state " << static_cast<int>(currentState) << std::endl; // DEBUG
 }
 
-void Game::run() { /* same as before */
+// --- Main Loop ---
+void Game::run() {
+    std::cout << "Starting main game loop..." << std::endl; // DEBUG
     while (window.isOpen()) {
+        // 1. Calculate Delta Time
         float dt = clock.restart().asSeconds();
-        if (dt > 0.1f) dt = 0.1f; // Prevent spiral of death
+        // Clamp delta time to prevent issues after pauses or lag spikes
+        if (dt > 0.1f) dt = 0.1f;
+
+        // 2. Handle Input (MUST BE CALLED EVERY FRAME)
+        // std::cout << "Calling handleInput()..." << std::endl; // DEBUG (Optional, can be noisy)
         handleInput();
+
+        // 3. Update Game State (MUST BE CALLED EVERY FRAME)
+        // std::cout << "Calling update(" << dt << ")..." << std::endl; // DEBUG (Optional, can be noisy)
         update(dt);
-        render();
+
+        // 4. Render Graphics (MUST BE CALLED EVERY FRAME)
+        // std::cout << "Calling render()..." << std::endl; // DEBUG (Optional, can be noisy)
+        render(); // render() calls window.display() internally
     }
+     std::cout << "Exited main game loop." << std::endl; // DEBUG
 }
 
-void Game::cycleShipSelection() {
-    int currentType = static_cast<int>(selectedShipType);
-    currentType++;
-    // Assuming ShipType enums are contiguous: Standard=0, Fast=1, Heavy=2
-    if (currentType > static_cast<int>(Player::ShipType::Heavy)) {
-        currentType = static_cast<int>(Player::ShipType::Standard); // Wrap around
-    }
-    selectedShipType = static_cast<Player::ShipType>(currentType);
-    std::cout << "Selected Ship Type: " << currentType << std::endl; // Debug
-}
-
-void Game::updateShipSelectionText() {
-    std::string shipName;
-    switch (selectedShipType) {
-        case Player::ShipType::Standard: shipName = "Standard"; break;
-        case Player::ShipType::Fast:     shipName = "Fast"; break;
-        case Player::ShipType::Heavy:    shipName = "Heavy"; break;
-        default:                         shipName = "Unknown"; break;
-    }
-    shipSelectionText.setString("Selected Ship: < " + shipName + " >");
-}
-
+// --- Input Handling ---
 void Game::handleInput() {
     sf::Event event;
     while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) window.close();
+        if (event.type == sf::Event::Closed) {
+            window.close();
+            return; // Exit polling loop if window closed
+        }
 
-        // Global inputs
+        // Global Keys
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
                 if (currentState == State::Playing) setState(State::Paused);
                 else if (currentState == State::Paused) setState(State::Playing);
                 else if (currentState == State::Instructions) setState(State::MainMenu);
-                else if (currentState == State::Story) { /* Maybe skip story? Or handled by timer */ }
+                else if (currentState == State::Story) { /* Allow skipping story? setState(State::Playing); loadLevel(currentLevel); */ }
                 else if (currentState == State::MainMenu) window.close();
             }
             if (event.key.code == sf::Keyboard::M) {
-                 if (currentState == State::Paused || currentState == State::GameOver) {
+                if (currentState == State::Paused || currentState == State::GameOver) {
                     setState(State::MainMenu);
-                 }
+                }
             }
         }
 
-        // State-specific inputs
+        // State-Specific Inputs
         switch (currentState) {
             case State::MainMenu:
-                 if (event.type == sf::Event::KeyPressed) {
+                if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::P) { currentMode = PlayMode::Campaign; setState(State::Playing); }
                     else if (event.key.code == sf::Keyboard::S) { currentMode = PlayMode::Survival; setState(State::Playing); }
                     else if (event.key.code == sf::Keyboard::I) { setState(State::Instructions); }
-                    else if (event.key.code == sf::Keyboard::N) { // Handle ship selection
+                    else if (event.key.code == sf::Keyboard::N) {
                         cycleShipSelection();
-                        updateShipSelectionText(); // Update display
-                        // Re-center text after content change
-                         shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
-                         shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f);
+                        updateShipSelectionText();
+                        // Re-center ship text
+                        shipSelectionText.setOrigin(shipSelectionText.getLocalBounds().left + shipSelectionText.getLocalBounds().width / 2.f, shipSelectionText.getLocalBounds().top + shipSelectionText.getLocalBounds().height / 2.f);
+                        shipSelectionText.setPosition(window.getSize().x / 2.f, messageText.getPosition().y + messageText.getGlobalBounds().height / 2.f + 40.f);
                     }
-                 }
+                }
+                break;
+
+            case State::Playing:
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Space && player && player->life) {
+                        player->shoot(); // Signal intent
+                        if (player->shootTimer <= 0) { // Check cooldown *before* spawning
+                            spawnBullet();
+                        }
+                    }
+                }
+                // Player movement input is handled directly in Player::handleInput using isKeyPressed
+                break;
+
+            case State::GameOver:
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::R) {
+                         // Reset is handled by setState(State::Playing) when coming from GameOver
+                         setState(State::Playing);
+                    }
+                }
+                break;
+
+            case State::Instructions: // Esc handled globally
+            case State::Story:        // Waits for timer or Esc (potential skip)
+            case State::LevelTransition: // Waits for timer
+            case State::Paused:       // Esc/M handled globally
                  break;
-             case State::Instructions: break; // Esc handled globally
-             case State::Story: break; // Waits for timer or skip key? (Add skip later if needed)
-             case State::Playing:
-                 if (event.type == sf::Event::KeyPressed) {
-                     if (event.key.code == sf::Keyboard::Space && player && player->life) {
-                         player->shoot(); // Player signals intent, Game checks cooldown
-                         if(player->shootTimer <= 0) { // Check if allowed to shoot now
-                             spawnBullet(); // Spawn if cooldown ready
-                         }
-                     }
-                 }
-                 break;
-             case State::LevelTransition: break; // Waits for timer
-             case State::Paused: break; // Esc/M handled globally
-             case State::GameOver:
-                  if (event.type == sf::Event::KeyPressed) {
-                      if (event.key.code == sf::Keyboard::R) {
-                           setState(State::Playing); // Resets based on mode in setState
-                      }
-                  }
-                  break;
         }
     }
 }
 
+// --- Update Dispatcher ---
 void Game::update(float dt) {
     switch (currentState) {
-        case State::MainMenu: updateMainMenu(dt); break;
         case State::Playing: updatePlaying(dt); break;
         case State::LevelTransition: updateLevelTransition(dt); break;
-        case State::GameOver: updateGameOver(dt); break;
         case State::Story: updateStory(dt); break;
-        // No update needed for Instructions, Paused
-        case State::Instructions: break;
-        case State::Paused: break;
+        // MainMenu, GameOver, Instructions, Paused don't have continuous updates
+        case State::MainMenu:        /* updateMainMenu(dt); */ break;
+        case State::GameOver:        /* updateGameOver(dt); */ break;
+        case State::Instructions:    break;
+        case State::Paused:          break;
     }
 }
 
-void Game::updateMainMenu(float dt) { /* ... */ }
-void Game::updateGameOver(float dt) { /* ... */ }
+// --- State Update Implementations ---
 
 void Game::updateStory(float dt) {
     storyDisplayTimer -= dt;
     if (storyDisplayTimer <= 0) {
-         // Story finished, load level or start survival
-         if (currentMode == PlayMode::Campaign) {
-             loadLevel(currentLevel); // Load the actual level now
-             setState(State::Playing);
-         } else { // Survival doesn't use story currently
-              startSurvival();
-              setState(State::Playing);
-         }
+        // Story finished, load level and transition to Playing
+        loadLevel(currentLevel); // Load the actual level content
+        setState(State::Playing); // Transition to playing state
+    }
+}
+
+void Game::updateLevelTransition(float dt) {
+    if (clock.getElapsedTime().asSeconds() > 2.0f) {
+        // Transition finished, show story for the *next* level
+        showStory(currentLevel); // showStory handles the next state (Story or Playing)
     }
 }
 
 void Game::updatePlaying(float dt) {
-    // --- Respawn Player Logic ---
-    if (playerRespawnTimer > 0) { // Check timer riêng lẻ
+    // 1. Handle Player Respawn Timer
+    if (playerRespawnTimer > 0) {
         playerRespawnTimer -= dt;
         if (playerRespawnTimer <= 0) {
-            if (player && player->lives > 0) { // Player đã tồn tại (chỉ bị tạm ngưng) và còn mạng
-                std::cout << "Respawn timer ended. Reviving player..." << std::endl;
-                player->reset(); // Đặt lại trạng thái (quan trọng là life=true)
+            if (player && player->lives > 0) { // Player was dead but has lives left
+                player->reset(); // Reset stats (pos, velocity, effects etc.)
                 player->pos = sf::Vector2f(window.getSize().x / 2.f, window.getSize().y / 2.f);
-                player->velocity = sf::Vector2f(0,0);
-                player->life = true; // Đảm bảo life = true
+                player->life = true; // Revive
                 player->shieldActive = true; // Respawn shield
                 player->shieldTimer = 2.0f;
-            } else if (!player && /* cần biến lưu số mạng cũ > 0 */ true) { // Player đã bị xóa hoàn toàn (không nên xảy ra nếu takeDamage đúng)
-                 std::cout << "Respawn timer ended, player pointer was null. Spawning new player..." << std::endl;
-                 spawnPlayer();
-                 if(player) {
-                    player->shieldActive = true;
-                    player->shieldTimer = 2.0f;
-                 }
-            } else { // Timer hết nhưng hết mạng -> Game Over
-                std::cout << "Respawn timer ended but no lives left. Triggering Game Over." << std::endl;
-                setState(State::GameOver);
-                return; // Dừng updatePlaying
+            } else if (!player) {
+                 // This case shouldn't ideally happen if logic is correct,
+                 // means player unique_ptr got deleted before respawn timer finished.
+                 // Maybe game over was triggered prematurely?
+                 // For safety, just transition to game over if player is gone.
+                 std::cerr << "Error: Respawn timer ended but player pointer is null." << std::endl;
+                 setState(State::GameOver);
+                 return;
             }
-        }
-    } // --- Hết Respawn Logic ---
-
-
-    // --- Spawning ---
-    // Spawn Asteroids (chỉ khi không có boss)
-    if (!currentBoss) {
-        asteroidSpawnTimer -= dt;
-        if (asteroidSpawnTimer <= 0) {
-            // Spawn ngẫu nhiên kích thước
-            int sizeRoll = rand() % 3;
-            Asteroid::Size spawnSize;
-            switch (sizeRoll) {
-                case 0: spawnSize = Asteroid::Size::Large; break;
-                case 1: spawnSize = Asteroid::Size::Medium; break;
-                case 2: spawnSize = Asteroid::Size::Small; break;
-            }
-            spawnAsteroid(spawnSize);
-            asteroidSpawnTimer = ASTEROID_SPAWN_RATE_BASE / (1.0f + currentLevel * 0.05f);
+            // If player lives <= 0, the game over state would have been set earlier
+        } else {
+            return; // Still waiting for respawn, skip rest of update
         }
     }
 
-    // Spawn Hazard Meteors
+    // Check if player is null and not respawning -> Game Over
+    if (!player && playerRespawnTimer <= 0) {
+        if (currentState != State::GameOver) { // Prevent multiple calls
+             std::cout << "Player is null and not respawning. Triggering Game Over." << std::endl;
+             setState(State::GameOver);
+        }
+        return; // Stop updatePlaying if game over
+    }
+
+    // 2. Handle Spawning
+    // Asteroids (only if no boss)
+    if (!currentBoss || !currentBoss->life) {
+        asteroidSpawnTimer -= dt;
+        if (asteroidSpawnTimer <= 0) {
+            int sizeRoll = rand() % 3;
+            Asteroid::Size spawnSize = (sizeRoll == 0) ? Asteroid::Size::Large : ((sizeRoll == 1) ? Asteroid::Size::Medium : Asteroid::Size::Small);
+            spawnAsteroid(spawnSize);
+            asteroidSpawnTimer = ASTEROID_SPAWN_RATE_BASE / (1.0f + currentLevel * 0.05f); // Increase rate slightly with level
+            if (asteroidSpawnTimer < 0.5f) asteroidSpawnTimer = 0.5f; // Cap spawn rate
+        }
+    }
+
+    // Hazard Meteors
     hazardMeteorSpawnTimer -= dt;
     if (hazardMeteorSpawnTimer <= 0) {
         spawnHazardMeteor();
-        hazardMeteorSpawnTimer = HAZARD_METEOR_SPAWN_RATE * (0.8f + static_cast<float>(rand() % 40) / 100.f);
+        hazardMeteorSpawnTimer = HAZARD_METEOR_SPAWN_RATE * (0.8f + static_cast<float>(rand() % 40) / 100.f); // Randomize slightly
     }
 
-    // Spawn Power-ups
+    // Power-ups
     powerUpSpawnTimer -= dt;
     if (powerUpSpawnTimer <= 0) {
         spawnPowerUp();
-        powerUpSpawnTimer = POWERUP_SPAWN_RATE_BASE * (0.9f + static_cast<float>(rand() % 20) / 100.f);
+        powerUpSpawnTimer = POWERUP_SPAWN_RATE_BASE * (0.9f + static_cast<float>(rand() % 20) / 100.f); // Randomize slightly
     }
-    // --- Hết Spawning ---
 
-
-    // --- Update Entities ---
-    for (auto it = entities.begin(); it != entities.end(); /* no increment */) {
+    // 3. Update Entities
+    // Use explicit iterator loop to handle potential removals during update (though cleanup is separate)
+    for (auto it = entities.begin(); it != entities.end(); ++it) {
         Entity* e = it->get();
-
-        // Chỉ update nếu entity đang sống HOẶC nếu là player đang chờ hồi sinh (player->life=false nhưng playerRespawnTimer>0)
-        // Thực ra player chờ hồi sinh không cần update logic di chuyển/vẽ, chỉ cần timer chạy
         if (e->life) {
-             e->update(dt, window.getSize());
+            e->update(dt, window.getSize());
 
-            // Boss specific shooting logic trigger
+            // Trigger Boss shooting based on its internal timers
             if (e->type == Entity::Type::Boss) {
                 Boss* boss = static_cast<Boss*>(e);
-                if (boss->shootTimer1 <= 0) { spawnBossBullet(boss, 0); boss->shootTimer1 = boss->shootCooldown * (1.0f + (rand()%20)/100.f); }
-                if (boss->shootTimer2 <= 0 && boss->currentPhase > 0) { spawnBossBullet(boss, 1); boss->shootTimer2 = boss->shootCooldown * (1.1f + (rand()%20)/100.f); }
-                if (boss->shootTimer3 <= 0 && boss->currentPhase > 1) { spawnBossBullet(boss, 2); boss->shootTimer3 = boss->shootCooldown * (1.2f + (rand()%20)/100.f); }
+                // Boss timers are decremented in Boss::updateShooting
+                // Game::spawnBossBullet checks if timer <= 0
+                if (boss->shootTimer1 <= 0) { spawnBossBullet(boss, 0); /* Boss resets its own timer */ }
+                if (boss->currentPhase > 0 && boss->shootTimer2 <= 0) { spawnBossBullet(boss, 1); }
+                if (boss->currentPhase > 1 && boss->shootTimer3 <= 0) { spawnBossBullet(boss, 2); }
             }
-             ++it; // Chỉ tăng iterator nếu entity còn sống và đã update
-        } else {
-             // Nếu entity không sống, chuẩn bị xóa nó ở bước cleanupEntities sau
-             // Không cần update nó nữa
-             ++it; // Vẫn phải tăng iterator để duyệt tiếp
         }
     }
-    // --- Hết Update Entities ---
 
+    // 4. Check Collisions
+    checkCollisions();
 
-    // --- Collisions and Cleanup ---
-    checkCollisions(); // Check va chạm giữa các entity còn sống
-    cleanupEntities(); // Xóa các entity có life = false
-    // --- Hết Collisions and Cleanup ---
+    // 5. Cleanup Entities marked as not alive
+    cleanupEntities();
 
-
-    // --- Update UI ---
-    if (player) { // Kiểm tra xem player còn tồn tại không (có thể vừa bị xóa trong cleanup)
+    // 6. Update UI Text
+    if (player) { // Check if player still exists after cleanup
         scoreText.setString("Score: " + std::to_string(player->score));
         livesText.setString("Lives: " + std::to_string(player->lives));
-    } else if (playerRespawnTimer <= 0 && currentState != State::GameOver) {
-        // Nếu player null, không trong thời gian chờ, và chưa game over -> chắc chắn là game over
-        setState(State::GameOver);
-        return;
     } else {
-        // Player đang chờ hồi sinh hoặc đã game over
-        scoreText.setString("Score: ..."); // Hoặc giữ nguyên điểm cũ?
+        // If player is gone and we are not yet in GameOver state (and not respawning), something's wrong.
+        // This case is now handled earlier by checking !player && playerRespawnTimer <= 0.
+        // If we reach here and player is null, it means cleanup just removed them.
+        // UI will update correctly on the next frame when state is GameOver.
+        scoreText.setString("Score: ---");
         livesText.setString("Lives: 0");
     }
     levelText.setString(((currentMode == PlayMode::Campaign) ? "Level: " : "Wave: ") + std::to_string(currentLevel));
-    // --- Hết Update UI ---
 
-
-    // --- Check Level Completion (Campaign Mode) ---
-    if (currentMode == PlayMode::Campaign && checkLevelComplete()) {
-         // Đảm bảo player còn sống hoặc không cần chờ hồi sinh để qua màn
-         if (!currentBoss && (!player || player->life || playerRespawnTimer <=0 )) {
-             nextLevel();
-             setState(State::LevelTransition);
-         }
-    }
-    // --- Hết Check Level Completion ---
-}
-
-void Game::updateLevelTransition(float dt) {
-    if (clock.getElapsedTime().asSeconds() > 2.0f) { // Shorter transition
-        // Instead of going directly to Story state, call showStory
-        // showStory will decide whether to show text (go to Story state)
-        // or load the level directly (go to Playing state).
-        showStory(currentLevel); // Let showStory handle the next step
-    }
-}
-
-bool Game::checkLevelComplete() {
-    if (currentBoss && currentBoss->life) {
-        return false; // Boss is active, level not complete
-    }
-    // Check if any asteroids remain
-    for (const auto& entity : entities) {
-        if (entity->type == Entity::Type::Asteroid) {
-            return false;
-        }
-    }
-    return true; // No asteroids and no living boss
-}
-
-void Game::nextLevel() {
-    currentLevel++;
-}
-
-void Game::cleanupEntities() {
-    entities.remove_if([this](const std::unique_ptr<Entity>& e) {
-        if (!e->life) {
-            if (e->type == Entity::Type::Player) {
-                player = nullptr; // Player unique_ptr is removed, nullify raw pointer
-            } else if (e->type == Entity::Type::Boss) {
-                 currentBoss = nullptr; // Boss unique_ptr is removed
-                 if (player) player->addScore(bossDefeatScoreBonus); // Score for defeating boss
-                 // Switch back to background music?
-                 bossMusic.stop();
-                 backgroundMusic.play();
-                 // Trigger explosion effect handled in checkCollisions or here?
-            }
-            return true; // Remove entity
-        }
-        return false;
-    });
-}
-
-
-void Game::checkCollisions() {
-    for (auto i = entities.begin(); i != entities.end(); ++i) {
-        if (!(*i)->life || (*i)->R <= 0) continue;
-        for (auto j = std::next(i); j != entities.end(); ++j) {
-            if (!(*j)->life || (*j)->R <= 0) continue;
-
-            Entity* a = i->get();
-            Entity* b = j->get();
-
-            if (isCollide(a, b)) {
-                Entity::Type typeA = a->type;
-                Entity::Type typeB = b->type;
-
-                // Simplify check order
-                if (typeA > typeB) { // Ensure typeA is always <= typeB for fewer checks
-                    std::swap(a, b);
-                    std::swap(typeA, typeB);
-                }
-
-                // --- Player <-> Asteroid ---
-                if (typeA == Entity::Type::Player && typeB == Entity::Type::Asteroid) {
-                    if (player && player->life && !player->shieldActive) {
-                        std::cout << "Player collision! Lives before: " << player->lives << std::endl; // DEBUG
-                        player->takeDamage();
-                        explosionSoundPlayer.play();
-                        spawnEffect(animExplosionPlayer, player->pos);
-                        //a->life = false; // Player dies (will be removed, pointer nulled)
-                        b->life = false; // Asteroid destroyed
-                        if(player && !player->life && player->lives > 0) {
-                            playerRespawnTimer = PLAYER_RESPAWN_DELAY; // Set timer if lives left
-                            std::cout << "Player died, setting respawn timer. Lives left: " << player->lives << std::endl; // DEBUG
-                        }
-                        else if (player && player->life && player->shieldActive) {
-                            player->shieldActive = false; player->shieldTimer = 0; // Shield breaks
-                            b->life = false; // Asteroid destroyed
-                            spawnEffect(animExplosionSmall, b->pos); // Small explosion for shield hit
-                            explosionSoundAsteroid.play(); // Asteroid explosion sound
-                        }
-                        else if (player && !player->life && player->lives <= 0) {
-                            std::cout << "Player died, no lives left. Game Over soon." << std::endl; // DEBUG
-                        }
-                    }
-                }
-                // --- Player <-> Bullet (Enemy Bullet - TODO) ---
-                // else if (typeA == Entity::Type::Player && typeB == Entity::Type::Bullet && static_cast<Bullet*>(b)->isEnemyBullet) { ... }
-
-                // --- Player <-> PowerUp/Down ---
-                else if (typeA == Entity::Type::Player && (typeB == Entity::Type::PowerUp || typeB == Entity::Type::PowerDown)) {
-                    if (player && player->life) {
-                         player->applyPowerUp(static_cast<PowerUp*>(b));
-                         b->life = false; // Collect powerup
-                         powerupSound.play();
-                    }
-                }
-        // --- Player <-> HazardMeteor ---
-        else if (typeA == Entity::Type::Player && typeB == Entity::Type::HazardMeteor) {
-        HazardMeteor* meteor = static_cast<HazardMeteor*>(b); // Cast b to HazardMeteor
-
-        if (player && player->life) { // Check if player exists and is alive
-            if (!player->shieldActive) {
-                // Apply slow effect directly
-                player->slowTimer = 8.0f; // Duration of slow effect
-                player->speedBoostTimer = 0.f; // Cancel speed boost
-                meteor->life = false; // Destroy the meteor
-                spawnEffect(animExplosionSmall, meteor->pos); // Small effect on hit
-                powerdownSound.play(); // Play slow sound
-
-                // Player takes damage - standard procedure
-                std::cout << "Player hit Hazard Meteor! Lives before: " << player->lives << std::endl; // DEBUG
-                player->takeDamage(); // Player takes damage
-
-                // *** CRUCIAL: Check player state AFTER takeDamage for respawn ***
-                if (player && !player->life && player->lives > 0) {
-                    playerRespawnTimer = PLAYER_RESPAWN_DELAY; // Set respawn timer
-                    std::cout << "Player died from Hazard Meteor, setting respawn timer. Lives left: " << player->lives << std::endl; // DEBUG
-                } else if (player && !player->life && player->lives <= 0) {
-                    std::cout << "Player died from Hazard Meteor, no lives left. Game Over soon." << std::endl; // DEBUG
-                    // Game Over state will be triggered by update loop finding player is null/dead with no timer
-                }
-
-        } else { // Player has shield active
-            player->shieldActive = false; // Shield breaks
-            player->shieldTimer = 0;
-            meteor->life = false; // Destroy meteor anyway
-            spawnEffect(animExplosionSmall, meteor->pos);
-            powerdownSound.play(); // Play sound even with shield
-            std::cout << "Player shield blocked Hazard Meteor." << std::endl; // DEBUG
-        }
-    }
-}
-                 // --- Player <-> Boss ---
-                else if (typeA == Entity::Type::Player && typeB == Entity::Type::Boss) {
-                    if (player && player->life && !player->shieldActive) {
-                        player->takeDamage(); // Player takes damage from collision
-                        explosionSoundPlayer.play();
-                        spawnEffect(animExplosionPlayer, player->pos);
-                        a->life = false; // Player dies
-                        if(player->lives > 0) playerRespawnTimer = PLAYER_RESPAWN_DELAY;
-                        // Boss might take minor damage from ramming?
-                        // static_cast<Boss*>(b)->takeDamage(5);
-                    } else if (player && player->life && player->shieldActive) {
-                        player->shieldActive = false; player->shieldTimer = 0; // Shield breaks
-                        // Boss takes maybe minor damage?
-                        // static_cast<Boss*>(b)->takeDamage(2);
-                    }
-                }
-
-                // --- Bullet <-> Asteroid ---
-                else if (typeA == Entity::Type::Bullet && typeB == Entity::Type::Asteroid) {
-                    Bullet* bullet = static_cast<Bullet*>(a);
-                    Asteroid* asteroid = static_cast<Asteroid*>(b);
-                    asteroid->life = false;
-                    bullet->life = false;
-                    if (player) player->addScore(asteroid->scoreValue);
-                    explosionSoundAsteroid.play();
-                    spawnEffect(animExplosionAsteroid, asteroid->pos); // Use correct explosion anim
-                    if (asteroid->getSize() == Asteroid::Size::Large) { /* spawn medium */
-                        spawnAsteroid(Asteroid::Size::Medium, asteroid->pos); spawnAsteroid(Asteroid::Size::Medium, asteroid->pos);
-                    } else if (asteroid->getSize() == Asteroid::Size::Medium) { /* spawn small */
-                         spawnAsteroid(Asteroid::Size::Small, asteroid->pos); spawnAsteroid(Asteroid::Size::Small, asteroid->pos);
-                    }
-                }
-                 // --- Bullet <-> HazardMeteor ---
-                 else if (typeA == Entity::Type::Bullet && typeB == Entity::Type::HazardMeteor) {
-                     a->life = false; // Bullet destroyed
-                     b->life = false; // Meteor destroyed
-                     spawnEffect(animExplosionSmall, b->pos); // Small explosion
-                     explosionSoundAsteroid.play(); // Use asteroid sound?
-                 }
-                  // --- Bullet <-> Boss ---
-                  else if (typeA == Entity::Type::Bullet && typeB == Entity::Type::Boss) {
-                       Bullet* bullet = static_cast<Bullet*>(a);
-                       Boss* boss = static_cast<Boss*>(b);
-                       boss->takeDamage(bullet->damage); // Boss takes damage from bullet
-                       bullet->life = false; // Destroy bullet
-                       spawnEffect(animExplosionSmall, bullet->pos); // Small hit effect on boss
-                       // bossHitSound.play();
-                       // Check if boss died
-                       if (!boss->life) {
-                           triggerBossExplosion(boss->pos);
-                           // Boss removal and score handled in cleanupEntities
-                       }
-                  }
-
-                // --- Asteroid <-> Asteroid --- (Optional: make them bounce?)
-                // else if (typeA == Entity::Type::Asteroid && typeB == Entity::Type::Asteroid) { /* Bounce logic */ }
-
-                // --- Asteroid <-> HazardMeteor --- (Optional: bounce?)
-                 // else if (typeA == Entity::Type::Asteroid && typeB == Entity::Type::HazardMeteor) { /* Bounce logic */ }
+    // 7. Check Level Completion (Campaign Mode Only)
+    if (currentMode == PlayMode::Campaign) {
+        bool levelDone = checkLevelComplete();
+        if (levelDone) {
+            // Can proceed if player is alive or if they are dead but have finished respawning (timer <= 0)
+            bool canProceed = (player && player->life) || playerRespawnTimer <= 0;
+            if (!currentBoss && canProceed) { // Ensure no boss AND player ready
+                nextLevel(); // Increment level counter
+                setState(State::LevelTransition);
+                return; // Exit updatePlaying early as state has changed
             }
         }
     }
+     // --- Make sure no other logic runs if state changed during update ---
+     if (currentState != State::Playing) return;
 }
 
-
+// --- Rendering Dispatcher ---
 void Game::render() {
+    // std::cout << "render() called. Current State: " << static_cast<int>(currentState) << std::endl; // DEBUG
     window.clear(sf::Color::Black);
-    // Draw background
-    try { /* same as before */
+
+    // Draw Background
+    try {
         sf::Sprite backgroundSprite(resourceManager.getTexture("background.jpg"));
-        backgroundSprite.setScale(static_cast<float>(window.getSize().x) / backgroundSprite.getLocalBounds().width, static_cast<float>(window.getSize().y) / backgroundSprite.getLocalBounds().height);
+        backgroundSprite.setScale(
+            static_cast<float>(window.getSize().x) / backgroundSprite.getLocalBounds().width,
+            static_cast<float>(window.getSize().y) / backgroundSprite.getLocalBounds().height);
         window.draw(backgroundSprite);
-    } catch (const std::runtime_error& e) { // <<<--- THÊM CATCH CỤ THỂ
+    } catch (const std::runtime_error& e) {
         std::cerr << "Error rendering background: " << e.what() << std::endl;
-        // Không vẽ background nếu có lỗi
     }
 
-    // Draw entities (Effects first, then others, Player last with overlays)
-    for (const auto& entity : entities) { if(entity->type == Entity::Type::Effect) entity->draw(window); }
-    for (const auto& entity : entities) { if(entity->type != Entity::Type::Effect && entity.get() != player) entity->draw(window); }
-    if (player && player->life) player->draw(window); // Player draw now handles overlays
+    // Draw Entities (Effects first for layering)
+    for (const auto& entity : entities) {
+        if (entity->type == Entity::Type::Effect) entity->draw(window);
+    }
+    for (const auto& entity : entities) {
+        // Draw all non-effects, excluding player (drawn last)
+        if (entity->type != Entity::Type::Effect && entity.get() != player) entity->draw(window);
+    }
+    // Draw player last if alive (handles overlays internally)
+    if (player) {
+        // std::cout << "Attempting to draw player. Life: " << player->life << std::endl; // DEBUG
+        if (player->life) {
+            player->draw(window);
+        }
+    } else {
+        std::cout << "Player pointer is null, cannot draw." << std::endl; // DEBUG
+    }
 
 
     // Draw UI / Messages based on state
     switch (currentState) {
-        case State::MainMenu: renderMainMenu(); break;
-        case State::Instructions: renderInstructions(); break;
-        case State::Story: renderStory(); break;
-        case State::Playing: renderPlaying(); break;
-        case State::LevelTransition: renderLevelTransition(); break;
-        case State::GameOver: renderGameOver(); break;
-        case State::Paused: renderPaused(); break; // Changed from renderPlaying
+        case State::MainMenu:       renderMainMenu(); break;
+        case State::Instructions:   renderInstructions(); break;
+        case State::Story:          renderStory(); break;
+        case State::Playing:        renderPlaying(); break;
+        case State::LevelTransition:renderLevelTransition(); break;
+        case State::GameOver:       renderGameOver(); break;
+        case State::Paused:         renderPaused(); break;
     }
+
     window.display();
 }
 
+// --- State Render Implementations ---
+
 void Game::renderMainMenu() {
+    // std::cout << "renderMainMenu() called." << std::endl; // DEBUG
+    // Kiểm tra xem font có hợp lệ không trước khi vẽ
+    if (uiFont.getInfo().family.empty()) {
+         std::cerr << "WARNING: Attempting to render MainMenu with invalid font!" << std::endl;
+         // Vẽ hình chữ nhật thay thế để biết hàm có chạy không
+         sf::RectangleShape rect(sf::Vector2f(200, 100));
+         rect.setFillColor(sf::Color::Red);
+         rect.setPosition(100, 100);
+         window.draw(rect);
+         return; // Không vẽ text nếu font lỗi
+    }
+    // std::cout << " - Drawing messageText..." << std::endl; // DEBUG
     window.draw(messageText);
+    // std::cout << " - Drawing shipSelectionText..." << std::endl; // DEBUG
     window.draw(shipSelectionText);
-    window.draw(highScoreText); // Draw high score on main menu
+    // std::cout << " - Drawing highScoreText..." << std::endl; // DEBUG
+    window.draw(highScoreText);
 }
 
-void Game::renderInstructions() { window.draw(messageText); }
-void Game::renderStory() { window.draw(messageText); } // Just show the story text
+void Game::renderInstructions() {
+    window.draw(messageText); // Assumes text set in showInstructions
+}
+
+void Game::renderStory() {
+    window.draw(messageText); // Assumes text set before entering state
+}
 
 void Game::renderPlaying() {
     window.draw(scoreText);
     window.draw(livesText);
     window.draw(levelText);
-    // Optional: Draw boss health bar if boss exists
+
+    // Draw boss health bar if boss exists and is alive
     if (currentBoss && currentBoss->life) {
         float barWidth = 300.f;
         float barHeight = 15.f;
         float healthPercent = static_cast<float>(currentBoss->health) / currentBoss->maxHealth;
+        if (healthPercent < 0) healthPercent = 0; // Clamp health display
+
         sf::RectangleShape backgroundBar(sf::Vector2f(barWidth, barHeight));
         backgroundBar.setFillColor(sf::Color(100, 100, 100, 200));
         backgroundBar.setPosition(window.getSize().x / 2.f - barWidth / 2.f, 20.f);
@@ -769,66 +637,78 @@ void Game::renderPlaying() {
         window.draw(healthBar);
     }
 }
-void Game::renderLevelTransition() { renderPlaying(); window.draw(messageText); } // Show stats during transition
+
+void Game::renderLevelTransition() {
+    renderPlaying(); // Show game stats behind message
+    window.draw(messageText);
+}
 
 void Game::renderGameOver() {
-    if (gameOverSprite.getTexture()) {
+    if (gameOverSprite.getTexture()) { // Draw sprite only if texture loaded successfully
         window.draw(gameOverSprite);
     }
-    window.draw(messageText); // Draws text including score and high score
+    window.draw(messageText); // Draw score/options text
 }
 
 void Game::renderPaused() {
-     renderPlaying(); // Draw the paused game state
-     // Draw semi-transparent overlay
-      sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
-      overlay.setFillColor(sf::Color(0, 0, 0, 150));
-      window.draw(overlay);
-     // Draw Pause message
-     window.draw(messageText);
+    renderPlaying(); // Draw the paused game state underneath
+
+    // Draw semi-transparent overlay
+    sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+    overlay.setFillColor(sf::Color(0, 0, 0, 150)); // Black with alpha
+    window.draw(overlay);
+
+    // Draw Pause message text on top
+    window.draw(messageText);
 }
 
 
+// --- Game Logic Helpers ---
+
 void Game::loadLevel(int levelNum) {
-    std::cout << "Loading Level: " << levelNum << std::endl;
-    resetGame(false); // Partial reset (keep score/lives)
+    std::cout << "--- Loading Level: " << levelNum << " ---" << std::endl;
+    resetGame(false); // Partial reset (keeps score, lives, selected ship)
 
-    spawnPlayer(); // Ensure player exists
+    // Player is guaranteed to exist after resetGame(false) calls spawnPlayer
 
-    int numAsteroids = 4 + levelNum; // Fewer base, scales slower
-    int numHazards = levelNum / 2; // Add slow meteors based on level
+    int numAsteroids = 4 + levelNum;
+    int numHazards = levelNum / 2; // Example scaling
 
     for (int i = 0; i < numAsteroids; ++i) {
-        spawnAsteroid(Asteroid::Size::Large); // Start with large ones
+        spawnAsteroid(Asteroid::Size::Large);
     }
-     for (int i = 0; i < numHazards; ++i) {
-         spawnHazardMeteor();
-     }
+    for (int i = 0; i < numHazards; ++i) {
+        spawnHazardMeteor();
+    }
 
     // Spawn Boss?
     if (currentMode == PlayMode::Campaign && levelNum > 0 && levelNum % BOSS_LEVEL_INTERVAL == 0) {
         spawnBoss(levelNum);
-        bossMusic.play(); // Start boss music
+        backgroundMusic.stop();
+        bossMusic.play();
     } else {
-         backgroundMusic.play(); // Start normal music
+        // Ensure boss music is stopped and background music plays if no boss
+        if (bossMusic.getStatus() == sf::Music::Playing) bossMusic.stop();
+        if (backgroundMusic.getStatus() != sf::Music::Playing) backgroundMusic.play();
     }
 
+    // Reset spawn timers for the new level
     asteroidSpawnTimer = ASTEROID_SPAWN_RATE_BASE;
     powerUpSpawnTimer = POWERUP_SPAWN_RATE_BASE;
     hazardMeteorSpawnTimer = HAZARD_METEOR_SPAWN_RATE;
-    playerRespawnTimer = 0.f;
+    playerRespawnTimer = 0.f; // Ensure player starts active
 
-    // Story is shown before this via Story state
+    std::cout << "--- Level " << levelNum << " loading complete. Entity count: " << entities.size() << " ---" << std::endl;
 }
 
 void Game::startSurvival() {
     std::cout << "Starting Survival Mode" << std::endl;
-    resetGame(true); // Full reset for survival
-    currentLevel = 1;
+    resetGame(true); // Full reset for survival mode
+    currentLevel = 1; // Survival starts at wave 1
 
-    spawnPlayer();
+    // Player should exist after resetGame(true)
 
-    for (int i = 0; i < 3; ++i) { // Start with fewer asteroids
+    for (int i = 0; i < 3; ++i) { // Start with a few asteroids
         spawnAsteroid(Asteroid::Size::Large);
     }
 
@@ -836,162 +716,188 @@ void Game::startSurvival() {
     powerUpSpawnTimer = POWERUP_SPAWN_RATE_BASE;
     hazardMeteorSpawnTimer = HAZARD_METEOR_SPAWN_RATE;
     playerRespawnTimer = 0.f;
+
+    bossMusic.stop(); // Ensure no boss music
     backgroundMusic.play();
+    // Set state to Playing *after* setup is complete
+    setState(State::Playing);
 }
-
-void Game::spawnPlayer() {
-     if (player) return; // Already exists
-
-     auto newPlayer = std::make_unique<Player>();
-     player = newPlayer.get();
-     Animation dummyAnim; // Tạo một animation trống, không dùng đến
-     player->settings(dummyAnim, // Tham số này sẽ bị bỏ qua trong Player::settings đã sửa
-                      sf::Vector2f(window.getSize().x / 2.f, window.getSize().y / 2.f));
-     // Player score/lives được xử lý bởi resetGame
-
-     entities.push_back(std::move(newPlayer));
-     std::cout << "Player spawned." << std::endl; // Debug log
-}
-
 
 void Game::resetGame(bool fullReset) {
     // Store player stats if not a full reset and player exists
     int previousScore = 0;
-    int previousLives = 3; // Default lives
-     Player::ShipType previousShip = selectedShipType; // Keep selected ship through levels
+    int previousLives = 3; // Default starting lives
+    Player::ShipType shipToUse = selectedShipType; // Default to selection
 
     if (!fullReset && player) {
         previousScore = player->score;
         previousLives = player->lives;
-        // previousShip = player->currentShipType; // Or keep the globally selected one? Let's keep global.
+        shipToUse = player->currentShipType; // Keep the ship they were using
     }
 
-    entities.clear(); // Always clear entities
+    // Clear all entities
+    entities.clear();
     player = nullptr;
     currentBoss = nullptr;
 
-    // Spawn player first (needed for stats restoration)
-    spawnPlayer(); // Ensure player object exists
+    // Always respawn player object after clearing
+    spawnPlayer(); // Creates the player object and sets the raw pointer
 
     if (fullReset) {
-        currentLevel = 1;
-        if(player) {
+        currentLevel = 1; // Reset level for full reset
+        if (player) {
             player->score = 0;
             player->lives = 3;
-             player->setShipType(selectedShipType); // Apply selected type on full reset
+            player->setShipType(selectedShipType); // Use the globally selected type
         }
-        selectedShipType = Player::ShipType::Standard; // Reset selection on full reset
-        updateShipSelectionText(); // Update UI text if needed immediately
-
+        selectedShipType = Player::ShipType::Standard; // Reset global selection
+        updateShipSelectionText(); // Update menu display
     } else {
         // Keep currentLevel
         if (player) {
             player->score = previousScore;
             player->lives = previousLives;
-            player->reset(); // Reset position, velocity, effects
+            player->setShipType(shipToUse); // Restore the correct ship type
+            player->reset(); // Reset position, velocity, effects etc.
             player->pos = sf::Vector2f(window.getSize().x / 2.f, window.getSize().y / 2.f);
-             player->setShipType(previousShip); // Apply the ship type that was active or selected
+            player->life = true; // Ensure player is alive
         }
     }
+}
+
+void Game::spawnPlayer() {
+    // if (player) return; // Should be null after entities.clear() in resetGame
+
+    auto newPlayer = std::make_unique<Player>();
+    player = newPlayer.get(); // Get raw pointer BEFORE moving ownership
+
+    Animation dummyAnim; // Player::settings loads its own textures/anims
+    player->settings(dummyAnim, sf::Vector2f(window.getSize().x / 2.f, window.getSize().y / 2.f));
+    // Score/lives/ship type are handled by resetGame logic calling this
+
+    entities.push_back(std::move(newPlayer)); // Add to entity list
+    std::cout << "Player spawned/re-added." << std::endl;
 }
 
 void Game::spawnAsteroid(Asteroid::Size size, sf::Vector2f pos) {
     auto asteroid = std::make_unique<Asteroid>(size);
     Animation* animPtr = nullptr;
-    float radius = 25.f;
+    float radius;
 
     switch(size) {
-        case Asteroid::Size::Large: animPtr = &animRockLarge; radius = 25.f; break;
+        case Asteroid::Size::Large:  animPtr = &animRockLarge; radius = 25.f; break;
         case Asteroid::Size::Medium: animPtr = &animRockMedium; radius = 15.f; break;
-        case Asteroid::Size::Small: animPtr = &animRockSmall; radius = 8.f; break;
+        case Asteroid::Size::Small:  animPtr = &animRockSmall; radius = 8.f; break;
+        default: std::cerr << "Error: Invalid asteroid size requested!" << std::endl; return;
     }
 
-    if (!animPtr) {
-        std::cerr << "Error: Could not find animation for asteroid size!" << std::endl;
-        return;
+    // Calculate random edge position if not provided
+    if (pos.x == -100 && pos.y == -100) { // Use the default value as a flag
+        int edge = rand() % 4;
+        float spawnX = 0, spawnY = 0;
+        switch(edge) {
+            case 0: // Top
+                spawnX = static_cast<float>(rand() % WINDOW_WIDTH);
+                spawnY = -radius;
+                break;
+            case 1: // Right
+                spawnX = static_cast<float>(WINDOW_WIDTH + radius);
+                spawnY = static_cast<float>(rand() % WINDOW_HEIGHT);
+                break;
+            case 2: // Bottom
+                spawnX = static_cast<float>(rand() % WINDOW_WIDTH);
+                spawnY = static_cast<float>(WINDOW_HEIGHT + radius);
+                break;
+            case 3: // Left
+                spawnX = -radius;
+                spawnY = static_cast<float>(rand() % WINDOW_HEIGHT);
+                break;
+        }
+        pos = sf::Vector2f(spawnX, spawnY);
     }
 
-     if (pos.x == -100 && pos.y == -100) { /* Calculate spawn position same as before */
-         int edge = rand() % 4;
-         switch(edge) {
-             case 0: pos = sf::Vector2f(static_cast<float>(rand() % WINDOW_WIDTH), -radius); break;
-             case 1: pos = sf::Vector2f(static_cast<float>(WINDOW_WIDTH + radius), static_cast<float>(rand() % WINDOW_HEIGHT)); break;
-             case 2: pos = sf::Vector2f(static_cast<float>(rand() % WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT + radius)); break;
-             case 3: pos = sf::Vector2f(-radius, static_cast<float>(rand() % WINDOW_HEIGHT)); break;
-         }
-     }
-     asteroid->settings(*animPtr, pos, static_cast<float>(rand() % 360), radius);
-     entities.push_back(std::move(asteroid));
+    asteroid->settings(*animPtr, pos, static_cast<float>(rand() % 360), radius);
+    if (asteroid->type != Entity::Type::Asteroid) { // Sanity check after settings
+        std::cerr << "Warning: Spawned asteroid does not have Asteroid type!" << std::endl;
+    }
+    entities.push_back(std::move(asteroid));
 }
 
 void Game::spawnHazardMeteor() {
      auto meteor = std::make_unique<HazardMeteor>();
-      sf::Vector2f pos;
-      float radius = 20.f; // Meteor radius
-      int edge = rand() % 4;
-      switch(edge) { /* Calculate spawn pos same as asteroid */
-         case 0: pos = sf::Vector2f(static_cast<float>(rand() % WINDOW_WIDTH), -radius); break;
-         case 1: pos = sf::Vector2f(static_cast<float>(WINDOW_WIDTH + radius), static_cast<float>(rand() % WINDOW_HEIGHT)); break;
-         case 2: pos = sf::Vector2f(static_cast<float>(rand() % WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT + radius)); break;
-         case 3: pos = sf::Vector2f(-radius, static_cast<float>(rand() % WINDOW_HEIGHT)); break;
+     float radius = 20.f;
+     sf::Vector2f pos;
+
+     int edge = rand() % 4;
+     float spawnX = 0, spawnY = 0;
+     switch(edge) {
+         case 0: spawnX = static_cast<float>(rand() % WINDOW_WIDTH); spawnY = -radius; break;
+         case 1: spawnX = static_cast<float>(WINDOW_WIDTH + radius); spawnY = static_cast<float>(rand() % WINDOW_HEIGHT); break;
+         case 2: spawnX = static_cast<float>(rand() % WINDOW_WIDTH); spawnY = static_cast<float>(WINDOW_HEIGHT + radius); break;
+         case 3: spawnX = -radius; spawnY = static_cast<float>(rand() % WINDOW_HEIGHT); break;
+     }
+     pos = sf::Vector2f(spawnX, spawnY);
+
+     meteor->settings(animHazardMeteor, pos, static_cast<float>(rand() % 360), radius);
+      if (meteor->type != Entity::Type::HazardMeteor) { // Sanity check
+        std::cerr << "Warning: Spawned hazard meteor does not have HazardMeteor type!" << std::endl;
       }
-      meteor->settings(animHazardMeteor, pos, static_cast<float>(rand() % 360), radius);
-      entities.push_back(std::move(meteor));
+     entities.push_back(std::move(meteor));
 }
 
-
 void Game::spawnBullet() {
-    // Check if player can *actually* shoot now (redundancy is okay here, ensures state)
+    // Cooldown check is done in handleInput before calling this
     if (!player || !player->life) {
-        std::cerr << "SpawnBullet called but player is null or dead." << std::endl; // More specific debug
-       return;
-   }
-    if (player->shootTimer > 0) {
-        std::cerr << "SpawnBullet called but cooldown active (" << player->shootTimer << ")" << std::endl; // Specific debug
+        std::cerr << "SpawnBullet called but player is null or dead." << std::endl;
         return;
     }
 
-
-   // --- If checks pass, proceed to spawn ---
-   std::cout << "Player cooldown OK. Spawning bullet..." << std::endl; // DEBUG
-    // Nếu qua được kiểm tra cooldown:
-    player->shootTimer = player->shootCooldown; // <<<---- RESET TIMER Ở ĐÂY
-    shootSound.play(); // <<<---- CHƠI ÂM THANH Ở ĐÂY
+    // Reset cooldown and play sound *now* that we know we are spawning
+    player->shootTimer = player->shootCooldown;
+    shootSound.play();
 
     Bullet::BulletType typeToSpawn = player->currentWeaponType;
     Animation* animPtr = nullptr;
     int bulletsToSpawn = 1;
-    float spreadAngle = 15.f; // Degrees
+    float spreadAngle = 15.f; // Degrees for spread shot
 
     switch(typeToSpawn) {
-        case Bullet::BulletType::Standard: animPtr = &animBulletBlue; bulletsToSpawn=1; break;
-        case Bullet::BulletType::Laser: animPtr = &animBulletLaser; bulletsToSpawn=1; break;
-        case Bullet::BulletType::Red: animPtr = &animBulletRed; bulletsToSpawn=1; break;
-        case Bullet::BulletType::Spread: animPtr = &animBulletBlue; bulletsToSpawn=3; break; // Use blue anim for spread
+        case Bullet::BulletType::Standard: animPtr = &animBulletBlue; bulletsToSpawn = 1; break;
+        case Bullet::BulletType::Laser:    animPtr = &animBulletLaser; bulletsToSpawn = 1; break;
+        case Bullet::BulletType::Spread:   animPtr = &animBulletBlue; bulletsToSpawn = 3; break;
+        case Bullet::BulletType::Red:      animPtr = &animBulletRed; bulletsToSpawn = 1; break; // Ensure Red is intended for player
+        default: std::cerr << "Error: Unknown bullet type requested!" << std::endl; return;
     }
 
-    if (!animPtr) {
-        std::cerr << "Error: Could not find animation for bullet type " << static_cast<int>(typeToSpawn) << std::endl;
-        player->shootTimer = 0; // Reset timer if spawn failed due to bad anim
-        shootSound.stop(); // Stop sound if it started but failed? Or let it play?
-        return;
+    if (!animPtr) { // Should not happen if switch is exhaustive
+         std::cerr << "Error: Could not find animation pointer for bullet type " << static_cast<int>(typeToSpawn) << std::endl;
+         player->shootTimer = 0; // Allow immediate retry if anim failed
+         return;
     }
+
+    float baseAngle = player->angle;
+    float offsetDist = player->R + 5.f; // Spawn slightly in front
+    float angleRadBase = (baseAngle - 90) * 3.14159f / 180.f;
+    sf::Vector2f offsetVecBase = sf::Vector2f(std::cos(angleRadBase) * offsetDist, std::sin(angleRadBase) * offsetDist);
+    sf::Vector2f spawnPosBase = player->pos + offsetVecBase;
 
     for (int i = 0; i < bulletsToSpawn; ++i) {
-         auto bullet = std::make_unique<Bullet>(typeToSpawn);
-         float shotAngle = player->angle;
-         if (bulletsToSpawn > 1) {
-             shotAngle += (i - (bulletsToSpawn - 1) / 2.0f) * spreadAngle;
-         }
-         float offset = player->R + 5.f; // Spawn slightly ahead of the player radius
-         float angleRad = (player->angle - 90) * 3.14159f / 180.f; // Use player angle for offset
-         sf::Vector2f startPos = player->pos + sf::Vector2f(std::cos(angleRad) * offset, std::sin(angleRad) * offset);
+        auto bullet = std::make_unique<Bullet>(typeToSpawn);
+        float shotAngle = baseAngle;
+        if (bulletsToSpawn > 1) {
+            // Calculate angle for spread: -(n-1)/2 * spread, ..., 0, ..., +(n-1)/2 * spread
+            shotAngle += (static_cast<float>(i) - (static_cast<float>(bulletsToSpawn - 1) / 2.0f)) * spreadAngle;
+        }
 
-         bullet->settings(*animPtr, startPos, shotAngle); // Pass the determined animation
-         entities.push_back(std::move(bullet));
+        // Note: For simplicity, spread shots originate from the same point.
+        // Could adjust spawnPos slightly based on shotAngle if desired.
+        bullet->settings(*animPtr, spawnPosBase, shotAngle);
+        if (bullet->type != Entity::Type::Bullet) { // Sanity check
+             std::cerr << "Warning: Spawned bullet does not have Bullet type!" << std::endl;
+        }
+        entities.push_back(std::move(bullet));
     }
-    std::cout << "Bullet spawned. Type: " << static_cast<int>(typeToSpawn) << std::endl; // DEBUG
-
+    // std::cout << "Bullet spawned. Type: " << static_cast<int>(typeToSpawn) << std::endl; // Optional debug
 }
 
 void Game::spawnBossBullet(Boss* boss, int firePointIndex) {
@@ -1002,159 +908,405 @@ void Game::spawnBossBullet(Boss* boss, int firePointIndex) {
         case 0: relativePos = boss->firePoint1; break;
         case 1: relativePos = boss->firePoint2; break;
         case 2: relativePos = boss->firePoint3; break;
-        default: return; // Invalid index
+        default: std::cerr << "Invalid boss fire point index: " << firePointIndex << std::endl; return;
     }
 
     sf::Vector2f startPos = boss->getAbsoluteFirePos(relativePos);
 
-    // Boss bullet type and angle (e.g., aimed at player or fixed pattern)
-    Bullet::BulletType bossBulletType = Bullet::BulletType::Red; // Example: Boss uses red bullets
+    Bullet::BulletType bossBulletType = Bullet::BulletType::Red; // Boss uses red bullets
     Animation* animPtr = &animBulletRed;
     float bulletAngle = 0;
 
-    // Aim at player example
+    // Simple aim-at-player logic
     if (player && player->life) {
         sf::Vector2f direction = player->pos - startPos;
-        bulletAngle = std::atan2(direction.y, direction.x) * 180.f / 3.14159f + 90.f; // Calculate angle towards player
+        bulletAngle = std::atan2(direction.y, direction.x) * 180.f / 3.14159f + 90.f; // atan2 gives angle in radians, convert and adjust
     } else {
-         bulletAngle = boss->angle + 180.f; // Fire straight down if player dead
+         bulletAngle = boss->angle + 180.f; // Fire straight 'down' relative to boss if player is dead/null
     }
-
 
     auto bullet = std::make_unique<Bullet>(bossBulletType);
     bullet->settings(*animPtr, startPos, bulletAngle);
-    // bullet->isEnemyBullet = true; // TODO: Add a flag to Bullet class to distinguish enemy bullets
+    // TODO: Add bullet->isEnemy = true; flag and check in Player-Bullet collision
+     if (bullet->type != Entity::Type::Bullet) { // Sanity check
+          std::cerr << "Warning: Spawned boss bullet does not have Bullet type!" << std::endl;
+     }
     entities.push_back(std::move(bullet));
+
+    // Boss resets its own shoot timer after deciding to fire
+    switch(firePointIndex) {
+        case 0: boss->shootTimer1 = boss->shootCooldown * (1.0f + (rand()%20)/100.f); break;
+        case 1: boss->shootTimer2 = boss->shootCooldown * (1.1f + (rand()%20)/100.f); break;
+        case 2: boss->shootTimer3 = boss->shootCooldown * (1.2f + (rand()%20)/100.f); break;
+    }
 }
 
-
-void Game::spawnPowerUp() { /* Same logic as before, but uses loaded animations */
-    PowerUp* powerUp = nullptr;
-    Animation* animPtr = nullptr; // Use pointers to loaded animations
-    float radius = 12.f;
-    sf::Vector2f pos(static_cast<float>(rand() % (WINDOW_WIDTH - 100) + 50),
-                      static_cast<float>(rand() % (WINDOW_HEIGHT - 100) + 50));
-    int typeRoll = rand() % 4; // Shield, Weapon, Speed, (Extra Life maybe later)
-
+void Game::spawnPowerUp() {
+    // Determine type
+    int typeRoll = rand() % 3; // 0: Shield, 1: Weapon, 2: Speed (ExtraLife handled differently?)
     PowerUp::PowerUpType chosenType;
-     // TODO: No collectible power-downs for now, use HazardMeteor
-
     switch(typeRoll) {
-        case 0: chosenType = PowerUp::PowerUpType::Shield; /* animPtr = &animShieldPU; */ break;
-        case 1: chosenType = PowerUp::PowerUpType::Weapon; /* animPtr = &animWeaponPU; */ break;
-        case 2: chosenType = PowerUp::PowerUpType::Speed;  /* animPtr = &animSpeedPU; */ break;
-        // case 3: chosenType = PowerUp::PowerUpType::ExtraLife; /* animPtr = &animExtraLifePU; */ break;
+        case 0: chosenType = PowerUp::PowerUpType::Shield; break;
+        case 1: chosenType = PowerUp::PowerUpType::Weapon; break;
+        case 2: chosenType = PowerUp::PowerUpType::Speed; break;
         default: return; // Should not happen
     }
 
-    // Need to load specific powerup anims in loadResources first and assign pointers here
-    // For now, just create the PowerUp object type
-    powerUp = new PowerUp(chosenType);
+    // Create using raw pointer first to check validity after settings
+    PowerUp* powerUp = new PowerUp(chosenType);
 
-    // The settings method in PowerUp now tries to load the texture based on type
-    // We pass a dummy animation here, PowerUp::settings will load the real one
-     Animation dummyAnim; // Create a default/dummy animation
-     powerUp->settings(dummyAnim, pos, 0, radius);
+    // Calculate random position within bounds
+    float margin = 50.f;
+    sf::Vector2f pos(static_cast<float>(rand() % (WINDOW_WIDTH - (int)(2*margin)) + margin),
+                      static_cast<float>(rand() % (WINDOW_HEIGHT - (int)(2*margin)) + margin));
+    float radius = 15.f; // Default collision radius
 
-     if (powerUp->life) { // Check if settings succeeded (e.g., texture loaded)
-        entities.push_back(std::unique_ptr<Entity>(powerUp)); // Transfer ownership
-     } else {
-         delete powerUp; // Settings failed, cleanup
-     }
+    Animation dummyAnim; // PowerUp::settings loads its own texture/anim
+    powerUp->settings(dummyAnim, pos, 0, radius);
+
+    if (powerUp->life && (powerUp->type == Entity::Type::PowerUp)) { // Check if setup was successful and type is correct
+        entities.push_back(std::unique_ptr<Entity>(powerUp)); // Transfer ownership to list
+    } else {
+        std::cerr << "Failed to spawn or configure PowerUp correctly. Deleting." << std::endl;
+        delete powerUp; // Cleanup if settings failed or type is wrong
+    }
 }
 
 void Game::spawnEffect(Animation& anim, sf::Vector2f pos) {
-    // This function now correctly takes a reference to a pre-loaded Animation object
     auto effect = std::make_unique<Effect>();
-    // Need to make a copy of the animation so each effect instance is independent
-    Animation animCopy = anim; // Make a copy
-    effect->settings(animCopy, pos);
+    Animation animCopy = anim; // Effects need their own copy to manage state
+    animCopy.reset();          // Ensure animation starts from frame 0
+    animCopy.play();
+    effect->settings(animCopy, pos); // Settings applies the animation and position
+     if (effect->type != Entity::Type::Effect) { // Sanity check
+        std::cerr << "Warning: Spawned effect does not have Effect type!" << std::endl;
+     }
     entities.push_back(std::move(effect));
 }
 
 void Game::spawnBoss(int level) {
-     if (currentBoss) return; // Only one boss at a time
+    if (currentBoss) {
+        std::cerr << "Warning: Trying to spawn boss when one already exists." << std::endl;
+        return;
+    }
 
-     std::cout << "Spawning Boss for Level " << level << std::endl;
-     auto boss = std::make_unique<Boss>();
-     // TODO: Choose boss type based on level? For now, always Boss1
-     currentBoss = boss.get(); // Store raw pointer
-     boss->settings(animBoss1, sf::Vector2f(window.getSize().x / 2.f, window.getSize().y * 0.15f)); // Position near top center
-     entities.push_back(std::move(boss));
+    std::cout << "Spawning Boss for Level " << level << std::endl;
+    auto boss = std::make_unique<Boss>();
+    currentBoss = boss.get(); // Assign raw pointer
 
-     // Stop background music, start boss music
-     backgroundMusic.stop();
-     bossMusic.play();
+    // TODO: Potentially choose boss type/animation based on level
+    Animation* bossAnim = &animBoss1;
+
+    boss->settings(*bossAnim, sf::Vector2f(window.getSize().x / 2.f, window.getSize().y * 0.15f));
+     if (boss->type != Entity::Type::Boss) { // Sanity check
+        std::cerr << "Warning: Spawned boss does not have Boss type!" << std::endl;
+     }
+    entities.push_back(std::move(boss));
+
+    // Music handled in loadLevel
 }
 
 void Game::triggerBossExplosion(sf::Vector2f bossPos) {
-    // bossExplodeSound.play();
-     // Spawn multiple small explosions around the boss area
-     int numExplosions = 10;
-     float radius = 50.f; // Radius to spawn explosions within
-     for (int i = 0; i < numExplosions; ++i) {
-          float angle = (static_cast<float>(rand()) / RAND_MAX) * 2.f * 3.14159f;
-          float dist = (static_cast<float>(rand()) / RAND_MAX) * radius;
-          sf::Vector2f offset(std::cos(angle) * dist, std::sin(angle) * dist);
-          spawnEffect(animExplosionBoss, bossPos + offset); // Use the specific boss explosion anim
-     }
-     // Add one big one in the center?
-     spawnEffect(animExplosionAsteroid, bossPos); // Use large asteroid explosion anim
+    // bossExplodeSound.play(); // TODO: Add sound buffer
+    int numExplosions = 10;
+    float radius = 60.f; // Spread radius for small explosions
+    for (int i = 0; i < numExplosions; ++i) {
+         float angle = (static_cast<float>(rand()) / RAND_MAX) * 2.f * 3.14159f;
+         float dist = (static_cast<float>(rand()) / RAND_MAX) * radius;
+         sf::Vector2f offset(std::cos(angle) * dist, std::sin(angle) * dist);
+         spawnEffect(animExplosionBoss, bossPos + offset); // Specific small boss explosions
+    }
+    // Add one larger one in the center
+    spawnEffect(animExplosionAsteroid, bossPos); // Use large asteroid/general explosion
+}
+
+// --- Collision Detection ---
+void Game::checkCollisions() {
+    // Use iterators for safe removal if needed (though cleanupEntities is preferred)
+    for (auto i = entities.begin(); i != entities.end(); ++i) {
+        Entity* entityA = i->get();
+        // Skip checks if entity is dead or has no collision radius
+        if (!entityA->life || entityA->R <= 0) continue;
+
+        for (auto j = std::next(i); j != entities.end(); ++j) {
+            Entity* entityB = j->get();
+            // Skip checks if second entity is dead or has no collision radius
+            if (!entityB->life || entityB->R <= 0) continue;
+
+            // Check distance
+            if (isCollide(entityA, entityB)) {
+                // Make pointers 'a' and 'b' point to the collided entities
+                Entity* a = entityA;
+                Entity* b = entityB;
+                Entity::Type typeA = a->type;
+                Entity::Type typeB = b->type;
+
+                // Ensure typeA <= typeB for easier checking
+                if (typeA > typeB) {
+                    std::swap(a, b);
+                    std::swap(typeA, typeB);
+                }
+
+                // --- Collision Pair Handling ---
+
+                // Player(1) <-> Asteroid(2)
+                if (typeA == Entity::Type::Player && typeB == Entity::Type::Asteroid) {
+                    if (player && player->life) { // Check player still exists and alive
+                         Asteroid* asteroid = static_cast<Asteroid*>(b);
+                         if (player->shieldActive) {
+                             player->shieldActive = false; player->shieldTimer = 0;
+                             asteroid->life = false;
+                             spawnEffect(animExplosionSmall, asteroid->pos);
+                             explosionSoundAsteroid.play();
+                         } else {
+                             player->takeDamage();
+                             explosionSoundPlayer.play();
+                             spawnEffect(animExplosionPlayer, player->pos);
+                             asteroid->life = false; // Asteroid also destroyed
+                             // Check for respawn NEED after takeDamage
+                             if (!player->life && player->lives > 0) {
+                                 playerRespawnTimer = PLAYER_RESPAWN_DELAY;
+                             }
+                         }
+                    }
+                }
+                // Player(1) <-> Bullet(3) (Assuming enemy bullets - Requires bullet flag)
+                // else if (typeA == Entity::Type::Player && typeB == Entity::Type::Bullet) {
+                //     Bullet* bullet = static_cast<Bullet*>(b);
+                //     if (bullet->isEnemy && player && player->life) { /* Handle damage/respawn */ }
+                // }
+
+                // Player(1) <-> PowerUp(4) / PowerDown(5)
+                else if (typeA == Entity::Type::Player && (typeB == Entity::Type::PowerUp || typeB == Entity::Type::PowerDown)) {
+                     if (player && player->life) {
+                         // PowerUp class handles distinguishing between Up/Down
+                         player->applyPowerUp(static_cast<PowerUp*>(b));
+                         b->life = false; // Consume item
+                         powerupSound.play(); // Assuming sound is for good powerups only
+                     }
+                }
+                 // Player(1) <-> Boss(7)
+                else if (typeA == Entity::Type::Player && typeB == Entity::Type::Boss) {
+                     if (player && player->life) {
+                         if (player->shieldActive) {
+                              player->shieldActive = false; player->shieldTimer = 0;
+                              // static_cast<Boss*>(b)->takeDamage(2); // Minor damage to boss?
+                         } else {
+                             player->takeDamage(); // Player takes damage
+                             explosionSoundPlayer.play();
+                             spawnEffect(animExplosionPlayer, player->pos);
+                             // static_cast<Boss*>(b)->takeDamage(5); // Maybe boss takes ram damage?
+                             if (!player->life && player->lives > 0) {
+                                 playerRespawnTimer = PLAYER_RESPAWN_DELAY;
+                             }
+                         }
+                     }
+                }
+                // Player(1) <-> HazardMeteor(8)
+                else if (typeA == Entity::Type::Player && typeB == Entity::Type::HazardMeteor) {
+                     if (player && player->life) {
+                         HazardMeteor* meteor = static_cast<HazardMeteor*>(b);
+                         if (player->shieldActive) {
+                              player->shieldActive = false; player->shieldTimer = 0;
+                              meteor->life = false;
+                              spawnEffect(animExplosionSmall, meteor->pos);
+                              powerdownSound.play(); // Play sound even if shielded
+                         } else {
+                             player->slowTimer = 8.0f; // Apply slow effect
+                             player->speedBoostTimer = 0.f; // Cancel speed boost
+                             meteor->life = false;
+                             spawnEffect(animExplosionSmall, meteor->pos);
+                             powerdownSound.play();
+                             // Hazard meteor ALSO damages player
+                             player->takeDamage();
+                             if (!player->life && player->lives > 0) {
+                                 playerRespawnTimer = PLAYER_RESPAWN_DELAY;
+                             }
+                         }
+                     }
+                }
+
+                // Asteroid(2) <-> Bullet(3)
+                else if (typeA == Entity::Type::Asteroid && typeB == Entity::Type::Bullet) {
+                     Asteroid* asteroid = static_cast<Asteroid*>(a);
+                     Bullet* bullet = static_cast<Bullet*>(b);
+                     // TODO: Ignore collision if bullet->isEnemy?
+                     asteroid->life = false;
+                     bullet->life = false;
+                     if (player) player->addScore(asteroid->scoreValue);
+                     explosionSoundAsteroid.play();
+                     spawnEffect(animExplosionAsteroid, asteroid->pos);
+                     // Spawn smaller asteroids
+                     if (asteroid->getSize() == Asteroid::Size::Large) {
+                         spawnAsteroid(Asteroid::Size::Medium, asteroid->pos);
+                         spawnAsteroid(Asteroid::Size::Medium, asteroid->pos);
+                     } else if (asteroid->getSize() == Asteroid::Size::Medium) {
+                         spawnAsteroid(Asteroid::Size::Small, asteroid->pos);
+                         spawnAsteroid(Asteroid::Size::Small, asteroid->pos);
+                     }
+                }
+
+                // Bullet(3) <-> Boss(7)
+                else if (typeA == Entity::Type::Bullet && typeB == Entity::Type::Boss) {
+                     Bullet* bullet = static_cast<Bullet*>(a);
+                     Boss* boss = static_cast<Boss*>(b);
+                     // TODO: Ignore collision if !bullet->isEnemy? (Player bullet hits boss)
+                     // if (!bullet->isEnemy) {
+                         boss->takeDamage(bullet->damage);
+                         bullet->life = false;
+                         spawnEffect(animExplosionSmall, bullet->pos); // Hit spark
+                         // bossHitSound.play();
+                         if (!boss->life) {
+                             triggerBossExplosion(boss->pos);
+                             // Score/music handled in cleanupEntities
+                         }
+                     // }
+                }
+                // Bullet(3) <-> HazardMeteor(8)
+                else if (typeA == Entity::Type::Bullet && typeB == Entity::Type::HazardMeteor) {
+                     a->life = false; // Bullet
+                     b->life = false; // Meteor
+                     spawnEffect(animExplosionSmall, b->pos);
+                     explosionSoundAsteroid.play(); // Reuse sound
+                }
+
+                // Other potential collisions (Asteroid-Asteroid, Asteroid-Hazard) ignored for now
+
+            } // End if isCollide
+        } // End inner loop (j)
+    } // End outer loop (i)
 }
 
 
-void Game::showInstructions() { /* Same as before */
-     currentState = State::Instructions;
-     messageText.setCharacterSize(24);
-     messageText.setString(/* Instruction Text */
-         "Instructions:\n\nArrow Keys Left/Right: Rotate\nArrow Key Up: Thrust\nSpacebar: Shoot\nEsc: Pause / Back\n\nDestroy Asteroids, Avoid Collisions!\nBlue=Shield, Red=Weapon, Green=Speed\nWatch out for Slow Meteors!\n\n[Esc] Back"
-         );
-     messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
-     messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+void Game::cleanupEntities() {
+    // Use std::list::remove_if for efficient removal
+    entities.remove_if([this](const std::unique_ptr<Entity>& e) {
+        // Điều kiện xóa cơ bản: life == false
+        if (!e->life) {
+            // --- XỬ LÝ ĐẶC BIỆT CHO PLAYER ---
+            if (e->type == Entity::Type::Player) {
+                // CHỈ xóa player nếu timer hồi sinh KHÔNG chạy (<= 0)
+                // Nếu life == false NHƯNG timer > 0 nghĩa là đang chờ hồi sinh -> KHÔNG XÓA
+                if (playerRespawnTimer <= 0) {
+                    player = nullptr; // Xóa con trỏ raw khi unique_ptr bị xóa
+                    std::cout << "Cleanup: Player removed (No respawn pending)." << std::endl;
+                    return true; // Đánh dấu để xóa
+                } else {
+                    // Đang chờ hồi sinh, không làm gì cả, không xóa
+                    // std::cout << "Cleanup: Player life is false, but respawn timer active. NOT removing." << std::endl; // Debug log (optional)
+                    return false; // KHÔNG xóa player
+                }
+            }
+            // --- KẾT THÚC XỬ LÝ PLAYER ---
+
+            // Xử lý cho Boss (như cũ)
+            else if (e->type == Entity::Type::Boss) {
+                std::cout << "Cleanup: Boss entity removed." << std::endl;
+                if (player) player->addScore(bossDefeatScoreBonus);
+                currentBoss = nullptr;
+                bossMusic.stop();
+                if (currentState == State::Playing) backgroundMusic.play();
+                return true; // Xóa Boss
+            }
+            // Các loại entity khác, nếu life == false thì xóa bình thường
+            else {
+                
+                return true; // Đánh dấu để xóa các entity khác (bullet, asteroid, effect...)
+            }
+        }
+        // Nếu life == true, không xóa
+        return false;
+    });
+}
+
+bool Game::checkLevelComplete() {
+    // Level is complete if there's no active boss AND no asteroids left
+    if (currentBoss && currentBoss->life) {
+        return false; // Boss alive, not complete
+    }
+
+    for (const auto& entity : entities) {
+        if (entity->life && entity->type == Entity::Type::Asteroid) {
+            return false; // Found a live asteroid, not complete
+        }
+    }
+
+    // No live boss and no live asteroids found
+    return true;
+}
+
+void Game::nextLevel() {
+    currentLevel++;
+    std::cout << "Proceeding to Level " << currentLevel << std::endl;
+    // State transition to LevelTransition happens in updatePlaying
+}
+
+void Game::showInstructions() {
+    // Set text first
+    messageText.setCharacterSize(24);
+    messageText.setString(
+        "Instructions:\n\n"
+        "Arrow Keys Left/Right: Rotate Ship\n"
+        "Arrow Key Up: Apply Thrust\n"
+        "Spacebar: Fire Weapon\n"
+        "Esc: Pause Game / Go Back\n\n"
+        "Objective: Destroy all asteroids!\n\n"
+        "Pickups:\n"
+        "  Blue Shield: Temporary invincibility\n"
+        "  Red Gears: Weapon upgrade\n"
+        "  Green Flames: Speed boost\n\n"
+        "Hazards:\n"
+        "  Slow Meteors: Don't destroy ship, but cause slow down and damage!\n\n"
+        "[Esc] Back to Main Menu"
+    );
+    // Center text based on its new content
+    messageText.setOrigin(messageText.getLocalBounds().left + messageText.getLocalBounds().width / 2.f, messageText.getLocalBounds().top + messageText.getLocalBounds().height / 2.f);
+    messageText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+    // Set state AFTER text is fully configured
+    // No need to call setState here if it was already called by handleInput
+    // Check if the state is already Instructions
+    if (currentState != State::Instructions) {
+       setState(State::Instructions);
+    }
+    // If handleInput already called setState(Instructions), calling it again is redundant
+    // but shouldn't cause a crash. The main fix is setting text *before* potential setState.
 }
 
 void Game::showStory(int level) {
     std::string story = "";
-    bool showStoryText = true; // Flag to control if story state is entered
+    bool showStoryText = true; // Assume story should be shown
 
-     switch (level) {
-         case 1:
-             story = "Level 1:\nAn unexpected asteroid cluster has entered our sector.\nClear the area, rookie!";
-             break;
-         case BOSS_LEVEL_INTERVAL: // Level 3
-             story = "WARNING:\nMassive energy signature detected!\nPrepare for contact!";
-             break;
-         case 4:
-             story = "Level 4:\nStrange, slowing meteors sighted.\nMaintain speed and clear the field.";
-             break;
-         case BOSS_LEVEL_INTERVAL*2: // Level 6
-             story = "Hostile signature returning!\nIt seems... enhanced. Engage with extreme caution!";
-             break;
-         // Add more cases for specific levels or events
-         // Example:
-         // case 10: story = "Intelligence reports indicate the source of the asteroids\nis nearby. Press on!"; break;
+    switch (level) {
+        case 1: story = "Level 1:\nAn unexpected asteroid cluster has entered our sector.\nClear the area, rookie!"; break;
+        case BOSS_LEVEL_INTERVAL: story = "WARNING:\nMassive energy signature detected!\nPrepare for contact!"; break;
+        case 4: story = "Level 4:\nStrange, slowing meteors sighted.\nMaintain speed and clear the field."; break;
+        case BOSS_LEVEL_INTERVAL * 2: story = "Hostile signature returning!\nIt seems... enhanced. Engage with extreme caution!"; break;
+        // Add more cases
+        default:
+            showStoryText = false; // No specific story for this level
+            break;
+    }
 
-         default:
-             // No story for this level, proceed directly
-             showStoryText = false; // Don't enter Story state
-             loadLevel(currentLevel); // Load level immediately
-             setState(State::Playing);
-             return; // Exit function early
-     }
-
-     if (showStoryText) {
-        messageText.setString(story);
-        // Origin/position set in setState(State::Story)
-        setState(State::Story); // Set state to Story to display the text
-     }
+    if (showStoryText) {
+        messageText.setString(story); // Set the text first
+        setState(State::Story);     // THEN set the state (which positions the text)
+    } else {
+        // No story, load level and go directly to playing
+        loadLevel(currentLevel);
+        setState(State::Playing);
+    }
 }
 
-// Static collision check method (same as before)
 bool Game::isCollide(const Entity *a, const Entity *b) {
-    sf::Vector2f diff = b->pos - a->pos; float distSq = diff.x * diff.x + diff.y * diff.y;
-    float radiusSum = a->R + b->R; return distSq < (radiusSum * radiusSum);
+    // Basic circle collision check
+    sf::Vector2f diff = b->pos - a->pos;
+    float distSq = (diff.x * diff.x) + (diff.y * diff.y);
+    float radiusSum = a->R + b->R;
+    return distSq < (radiusSum * radiusSum);
 }
 
+// --- High Score ---
 void Game::loadHighScore() {
     std::ifstream inputFile(HIGHSCORE_FILE);
     if (inputFile.is_open()) {
@@ -1163,7 +1315,7 @@ void Game::loadHighScore() {
             highScore = 0;
         }
         inputFile.close();
-         std::cout << "Loaded high score: " << highScore << std::endl;
+        std::cout << "Loaded high score: " << highScore << std::endl;
     } else {
         std::cout << "High score file (" << HIGHSCORE_FILE << ") not found. Starting with 0." << std::endl;
         highScore = 0;
@@ -1175,8 +1327,29 @@ void Game::saveHighScore() {
     if (outputFile.is_open()) {
         outputFile << highScore;
         outputFile.close();
-         std::cout << "Saved new high score: " << highScore << std::endl;
+        std::cout << "Saved new high score: " << highScore << std::endl;
     } else {
         std::cerr << "Error: Could not open " << HIGHSCORE_FILE << " for saving high score." << std::endl;
     }
+}
+
+// --- Ship Selection Helpers ---
+void Game::cycleShipSelection() {
+    int currentType = static_cast<int>(selectedShipType);
+    currentType++;
+    if (currentType > static_cast<int>(Player::ShipType::Heavy)) {
+        currentType = static_cast<int>(Player::ShipType::Standard); // Wrap around
+    }
+    selectedShipType = static_cast<Player::ShipType>(currentType);
+}
+
+void Game::updateShipSelectionText() {
+    std::string shipName;
+    switch (selectedShipType) {
+        case Player::ShipType::Standard: shipName = "Standard"; break;
+        case Player::ShipType::Fast:     shipName = "Fast";     break;
+        case Player::ShipType::Heavy:    shipName = "Heavy";    break;
+        default:                         shipName = "Unknown";  break;
+    }
+    shipSelectionText.setString("Selected Ship: < " + shipName + " >");
 }
