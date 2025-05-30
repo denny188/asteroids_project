@@ -91,11 +91,9 @@ void Bullet::update(float dt, const sf::Vector2u& windowSize) {
         life = false;
         return;
     }
-    // Optional bounds check
      if (pos.x < -R || pos.x > windowSize.x + R || pos.y < -R || pos.y > windowSize.y + R) {
         life = false;
         return;
      }
     anim.update(dt);
-    // No need to check anim.isFinished() usually, lifetime handles it
 }
